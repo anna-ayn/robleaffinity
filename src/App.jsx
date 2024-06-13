@@ -9,7 +9,7 @@ function App() {
         src={logo}
         className="self-stretch w-[80%] m-auto"
       />
-      <div className="p-5 h-full w-full bg-indigo-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100">
+      <div className="p-5 h-full w-full bg-red-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100">
         <h3 className="text-3xl mb-5">
           ¡Te damos la bienvenida a  <mark className="px-2 rounded">RobleAffinity, el oasis para graduados</mark>!
         </h3>

@@ -51,7 +51,6 @@
   background-image: linear-gradient(21deg, rgba(234, 91, 110, 0.52), rgba(98, 186, 243, 0.73)), url('img/infinite.jpg');
   width: 100%;
   background-size: cover;
-  color: white;
   background-repeat: no-repeat;
   
 
@@ -62,7 +61,7 @@
 }
 
 mark {
-  background-color: #839be0;
+  background-color: #eea5a676;
   font-family: 'Poppins', sans-serif;
   color: #000000;
 }
