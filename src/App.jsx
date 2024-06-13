@@ -1,35 +1,31 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import logo from './img/Logo.png'; 
 
 function App() {
-  const [count, setCount] = useState(0)
 
   return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className="flex flex-col items-center mx-auto w-full font-medium text-white max-w-[1000px]">
+      <img
+        src={logo}
+        className="self-stretch w-full"
+      />
+      <div className="mt-10 leading-5 text-center">
+        <h3 className="text-3xl">
+          ¡Te damos la bienvenida a  <mark className="px-2 text-white bg-[#EA5B6E] rounded">RobleAffinity, el oasis para graduados</mark>!
+        </h3>
+        <div className="text-lg">
+          <p>En RobleAffinity, nos enfocaremos en brindar una experiencia única y enriquecedora para aquellos que han superado la treintena y cuenten con título(s) universitario(s).</p>
+          <p><mark className="px-2 text-white bg-[#EA5B6E] rounded">Prepárate para entrar en un mundo de infinitas posibilidades.</mark></p>
+        </div>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
+      <div className="justify-center items-center px-16 py-4 mt-7 w-full text-base font-semibold tracking-normal border border-white border-solid max-w-[332px] rounded-[67.179px]">
+        CREAR UNA CUENTA
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+      <div className="mt-7 text-sm leading-4 text-center underline">
+        ¿Ya tienes una cuenta? Inicia sesión
+      </div>
+    </div>
+  );
 }
 
 export default App
