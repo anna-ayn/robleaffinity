@@ -2,20 +2,70 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
-  line-height: 1.5;
-  font-weight: 400;
+@font-face {
+  font-family: 'Gotham Rounded Bold';
+  src: local('GothamRoundedBold'), url('fonts/GothamRounded/GothamRoundedBold.otf') format('opentype');
+}
 
+@font-face {
+  font-family: 'Gotham Rounded Bold Italic';
+  src: local('GothamRoundedBoldItalic'), url('fonts/GothamRounded/GothamRoundedBoldItalic.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Gotham Rounded Book';
+  src: local('GothamRoundedBook'), url('fonts/GothamRounded/GothamRoundedBook.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Gotham Rounded Book Italic';
+  src: local('GothamRoundedBookItalic'), url('fonts/GothamRounded/GothamRoundedBookItalic.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Gotham Rounded Light';
+  src: local('GothamRoundedLight'), url('fonts/GothamRounded/GothamRoundedLight.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Gotham Rounded Light Italic';
+  src: local('GothamRoundedLightItalic'), url('fonts/GothamRounded/GothamRoundedLightItalic.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Gotham Rounded Medium';
+  src: local('GothamRoundedMedium'), url('fonts/GothamRounded/GothamRoundedMedium.otf') format('opentype');
+}
+
+@font-face {
+  font-family: 'Gotham Rounded Medium Italic';
+  src: local('GothamRoundedMediumItalic'), url('fonts/GothamRounded/GothamRoundedMediumItalic.otf') format('opentype');
+}
+
+
+:root {
+  line-height: 1.5;
+  font-family: 'Gotham Rounded Medium', sans-serif;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background: linear-gradient(21deg, #EA5B6E -9.99%, #62BAF3 128.53%);
+  background-image: linear-gradient(21deg, rgba(234, 91, 110, 0.52), rgba(98, 186, 243, 0.73)), url('img/infinite.jpg');
+  width: 100%;
+  background-size: cover;
+  color: white;
+  background-repeat: no-repeat;
+  
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+mark {
+
+  font-family: 'Poppins', sans-serif;
+}
+
 
 a {
   font-weight: 500;
