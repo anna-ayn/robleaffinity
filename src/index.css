@@ -62,8 +62,9 @@
 }
 
 mark {
-
+  background-color: #839be0;
   font-family: 'Poppins', sans-serif;
+  color: #000000;
 }
 
 
