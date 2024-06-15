@@ -2,57 +2,69 @@
 @tailwind components;
 @tailwind utilities;
 
+/* font family of tinder - no se uso estos fonts xd */
 @font-face {
-  font-family: 'Gotham Rounded Bold';
-  src: local('GothamRoundedBold'), url('fonts/GothamRounded/GothamRoundedBold.otf') format('opentype');
+  font-family: "Gotham Rounded Bold";
+  src: local("GothamRoundedBold"),
+    url("fonts/GothamRounded/GothamRoundedBold.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'Gotham Rounded Bold Italic';
-  src: local('GothamRoundedBoldItalic'), url('fonts/GothamRounded/GothamRoundedBoldItalic.otf') format('opentype');
+  font-family: "Gotham Rounded Bold Italic";
+  src: local("GothamRoundedBoldItalic"),
+    url("fonts/GothamRounded/GothamRoundedBoldItalic.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'Gotham Rounded Book';
-  src: local('GothamRoundedBook'), url('fonts/GothamRounded/GothamRoundedBook.otf') format('opentype');
+  font-family: "Gotham Rounded Book";
+  src: local("GothamRoundedBook"),
+    url("fonts/GothamRounded/GothamRoundedBook.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'Gotham Rounded Book Italic';
-  src: local('GothamRoundedBookItalic'), url('fonts/GothamRounded/GothamRoundedBookItalic.otf') format('opentype');
+  font-family: "Gotham Rounded Book Italic";
+  src: local("GothamRoundedBookItalic"),
+    url("fonts/GothamRounded/GothamRoundedBookItalic.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'Gotham Rounded Light';
-  src: local('GothamRoundedLight'), url('fonts/GothamRounded/GothamRoundedLight.otf') format('opentype');
+  font-family: "Gotham Rounded Light";
+  src: local("GothamRoundedLight"),
+    url("fonts/GothamRounded/GothamRoundedLight.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'Gotham Rounded Light Italic';
-  src: local('GothamRoundedLightItalic'), url('fonts/GothamRounded/GothamRoundedLightItalic.otf') format('opentype');
+  font-family: "Gotham Rounded Light Italic";
+  src: local("GothamRoundedLightItalic"),
+    url("fonts/GothamRounded/GothamRoundedLightItalic.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'Gotham Rounded Medium';
-  src: local('GothamRoundedMedium'), url('fonts/GothamRounded/GothamRoundedMedium.otf') format('opentype');
+  font-family: "Gotham Rounded Medium";
+  src: local("GothamRoundedMedium"),
+    url("fonts/GothamRounded/GothamRoundedMedium.otf") format("opentype");
 }
 
 @font-face {
-  font-family: 'Gotham Rounded Medium Italic';
-  src: local('GothamRoundedMediumItalic'), url('fonts/GothamRounded/GothamRoundedMediumItalic.otf') format('opentype');
+  font-family: "Gotham Rounded Medium Italic";
+  src: local("GothamRoundedMediumItalic"),
+    url("fonts/GothamRounded/GothamRoundedMediumItalic.otf") format("opentype");
 }
-
 
 :root {
   line-height: 1.5;
-  font-family: 'Gotham Rounded Medium', sans-serif;
+  font-family: "Poppins", sans-serif;
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-image: linear-gradient(21deg, rgba(234, 91, 110, 0.52), rgba(98, 186, 243, 0.73)), url('img/infinite.jpg');
+  background-image: linear-gradient(
+      21deg,
+      rgba(234, 91, 110, 0.52),
+      rgba(98, 186, 243, 0.73)
+    ),
+    url("img/infinite.jpg");
   width: 100%;
   background-size: cover;
   background-repeat: no-repeat;
-  
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -61,11 +73,10 @@
 }
 
 mark {
-  background-color: #FF8787;
-  font-family: 'Poppins', sans-serif;
-  color:#fefdfb;
+  background-color: #ff8787;
+  font-family: "Alegreya Sans SC", sans-serif;
+  color: #fefdfb;
 }
-
 
 a {
   font-weight: 500;
