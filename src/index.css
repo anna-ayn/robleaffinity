@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 /* font family of tinder - no se uso estos fonts xd */
 @font-face {
   font-family: "Gotham Rounded Bold";
@@ -89,11 +95,8 @@ body {
 
 .pulse {
   border: 1px white solid;
-  font-size: 1.1rem;
-  line-height: 1.5rem;
   outline: none;
   margin-top: 10px;
-  padding: 20px 30px;
   width: 100%;
   font-weight: 600;
   max-width: 400px;
@@ -124,4 +127,8 @@ pulse:focus {
   border-color: var(--hover);
   background-color: #ff9ed79b;
   color: #090909;
+}
+
+input {
+  background-color: white;
 }
