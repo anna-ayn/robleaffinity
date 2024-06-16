@@ -10,7 +10,6 @@ bcrypt.genSalt(salt);
 
 const insertarCuenta = async (body) => {
   const client = getClient();
-  console.log("HOLAAAAA");
   const {nombre, apellido, fecha_nacimiento, telefono, email, contrasena} = body;
   bcrypt.hash(contrasena, salt, (err, hash) => {
     if (err) {
@@ -19,7 +18,6 @@ const insertarCuenta = async (body) => {
         return;
     }
     // Store hash in your password DB.
-    console.log(hash);
     hashedPassword = hash;
   });
   let insertRow = client.query('INSERT INTO cuenta(nombre, apellido, fecha_nacimiento, telefono, email, contrasena) VALUES($1, $2, $3, $4, $5, $6);', [`${nombre}`, `${apellido}`, `${fecha_nacimiento}`, `${telefono}`, `${email}`, `${hashedPassword}`]);
