@@ -1,7 +1,46 @@
 import "../App.css";
 import logo from "../img/Logo.png";
+import { useRef } from "react";
 
 function SignUp() {
+  const nombre = useRef();
+  const apellido = useRef();
+  const fechaNacimiento = useRef();
+  const telefono = useRef();
+  const email = useRef();
+  const contrasena = useRef();
+
+  function handleSubmit() {
+    fetch("http://localhost:3001/cuentas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        nombre: nombre.current.value,
+        apellido: apellido.current.value,
+        fecha_nacimiento: fechaNacimiento.current.value,
+        telefono: telefono.current.value,
+        email: email.current.value,
+        contrasena: contrasena.current.value,
+      }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.text();
+        } else {
+          throw new Error("Error al crear la cuenta");
+        }
+      })
+      .then((data) => {
+        console.log("Cuenta creada");
+      })
+      .catch((error) => {
+        console.error(error);
+        alert("Error al crear la cuenta");
+      });
+  }
+
   return (
     <div className="flex flex-col items-center mx-auto w-full h-full font-medium text-white max-w-auto">
       <img src={logo} className="self-stretch w-[80%] sm:w-[30%] m-auto" />
@@ -28,6 +67,7 @@ function SignUp() {
                 id="name"
                 type="text"
                 placeholder="Nombre"
+                ref={nombre}
                 required
               />
             </div>
@@ -44,6 +84,7 @@ function SignUp() {
                 id="surname"
                 type="text"
                 placeholder="Apellido"
+                ref={apellido}
                 required
               />
             </div>
@@ -61,6 +102,7 @@ function SignUp() {
                 id="birthdate"
                 type="date"
                 placeholder="Fecha de Nacimiento"
+                ref={fechaNacimiento}
                 required
               />
             </div>
@@ -77,6 +119,7 @@ function SignUp() {
                 id="phone"
                 type="tel"
                 placeholder="Teléfono"
+                ref={telefono}
                 required
               />
             </div>
@@ -93,6 +136,7 @@ function SignUp() {
               id="email"
               type="email"
               placeholder="hola@ejemplo.com"
+              ref={email}
               required
             />
           </div>
@@ -108,12 +152,15 @@ function SignUp() {
               id="password"
               type="password"
               placeholder="********"
+              ref={contrasena}
               required
             />
           </div>
         </form>
       </div>
-      <button className="pulse text-lg sm:text-xl p-2">Crear cuenta</button>
+      <button className="pulse text-lg sm:text-xl p-2" onClick={handleSubmit}>
+        Crear cuenta
+      </button>
     </div>
   );
 }
