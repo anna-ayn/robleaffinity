@@ -32,9 +32,6 @@ function SignUp() {
           throw new Error("Error al crear la cuenta");
         }
       })
-      .then((data) => {
-        console.log("Cuenta creada");
-      })
       .catch((error) => {
         console.error(error);
         alert("Error al crear la cuenta");

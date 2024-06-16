@@ -1,8 +1,8 @@
-import express from 'express'
+const express = require('express')
 const app = express()
 const port = 3001
 
-import {insertarCuenta} from './cuenta.js'
+const { insertarCuenta } = require('./cuenta.js')
 
 app.use(express.json())
 app.use(function (req, res, next) {

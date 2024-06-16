@@ -1,12 +1,8 @@
 
-import dotenv from 'dotenv';
-import pg from "pg";
-dotenv.config();
+const Pool = require('pg').Pool
 
-export function getClient() {
-  const { Pool } = pg;
-
-  dotenv.config();
+function getClient() {
+  require('dotenv').config();
 
   const client = new Pool({
     host: process.env.PG_HOST,
@@ -14,7 +10,7 @@ export function getClient() {
     user: process.env.PG_USER,
     password: process.env.PG_PASSWORD,
     database: process.env.PG_DATABASE,
-    ssl: true,
+    connectionString: process.env.PG_CONNECTION_STRING
   });
 
   // verificar conexion a la bd
@@ -43,3 +39,7 @@ export function getClient() {
 
   return client;
 }
+
+getClient();
+
+module.exports = { getClient };
