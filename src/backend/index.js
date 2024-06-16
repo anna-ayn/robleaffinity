@@ -13,13 +13,8 @@ app.use(function (req, res, next) {
 });
 
 app.post('/cuentas', (req, res) => {
-  insertarCuenta(req.body)
-  .then(response => {
-    res.status(200).send(response);
-  })
-  .catch(error => {
-    res.status(500).send(error);
-  })
+  const result = insertarCuenta(req.body);
+  res.send(result);
 })
 
 
