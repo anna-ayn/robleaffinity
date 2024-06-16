@@ -1,7 +1,9 @@
 
 import { MdChildFriendly } from "react-icons/md";
 import { getClient } from "./client.js";
+import bcrypt from 'bcrypt';
 
+const saltRounds = 10;
 
 // funcion para insertar una cuenta en la bd
 
@@ -9,7 +11,8 @@ export const insertarCuenta = async (body) => {
   console.log(body);
   const client = getClient();
   const {nombre, apellido, fecha_nacimiento, telefono, email, contrasena} = body;
-  let insertRow = client.query('INSERT INTO cuenta(nombre, apellido, fecha_nacimiento, telefono, email, contrasena) VALUES($1, $2, $3, $4, $5, $6);', [`${nombre}`, `${apellido}`, `${fecha_nacimiento}`, `${telefono}`, `${email}`, `${contrasena}`]);
+  const hashedPassword = await bcrypt.hash(contrasena, saltRounds);
+  let insertRow = client.query('INSERT INTO cuenta(nombre, apellido, fecha_nacimiento, telefono, email, contrasena) VALUES($1, $2, $3, $4, $5, $6);', [`${nombre}`, `${apellido}`, `${fecha_nacimiento}`, `${telefono}`, `${email}`, `${hashedPassword}`]);
   console.log(`Inserted ${insertRow.rowCount} row`);
   client.end();
 };
