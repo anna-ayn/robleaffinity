@@ -40,7 +40,11 @@ function SignUp() {
 
   return (
     <div className="flex flex-col items-center mx-auto w-full h-full font-medium text-white max-w-auto">
-      <img src={logo} className="self-stretch w-[80%] sm:w-[30%] m-auto" />
+      <img
+        src={logo}
+        onClick={() => (window.location.href = "/")}
+        className="self-stretch w-[80%] sm:w-[30%] m-auto cursor-pointer"
+      />
       <h3 className="text-xl sm:text-lg mb-5">
         🌍 Conectando experiencias y sabiduría:{" "}
         {window.innerWidth < 600 ? <br /> : ""}

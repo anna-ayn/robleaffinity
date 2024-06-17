@@ -10,8 +10,12 @@ function Home() {
   };
   return (
     <div className="flex flex-col items-center mx-auto w-full font-medium text-white max-w-auto">
-      <img src={logo} className="self-stretch w-[80%] sm:w-[38%] m-auto" />
-      <div className="p-5 h-full w-[80%] bg-red-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100">
+      <img
+        src={logo}
+        onClick={() => (window.location.href = "/")}
+        className="self-stretch w-[80%] sm:w-[30%] m-auto cursor-pointer"
+      />
+      <div className="p-2 h-full w-full sm:w-[80%] bg-red-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100">
         <h3 className="text-xl sm:text-2xl mb-5">
           ¡Te damos la bienvenida a{" "}
           <mark className="px-2 rounded text-2xl sm:text-3xl">
