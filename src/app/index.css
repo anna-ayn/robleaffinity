@@ -70,21 +70,13 @@
     url("img/infinite.jpg");
   width: 100%;
   background-size: cover;
+  background-position: center;
   background-repeat: no-repeat;
-
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-size: 1rem;
-  padding: 0 2rem;
-}
-
-body {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
 }
 
 mark {
@@ -99,6 +91,8 @@ body {
   place-items: center;
   min-width: 320px;
   min-height: 100vh;
+  justify-content: center;
+  padding: 1rem;
 }
 
 .pulse {
