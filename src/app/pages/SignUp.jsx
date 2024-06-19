@@ -11,7 +11,7 @@ function SignUp() {
   const contrasena = useRef();
 
   function handleSubmit() {
-    fetch("http://localhost:3001/cuentas", {
+    fetch("http://localhost:3001/api/cuentas", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -27,14 +27,18 @@ function SignUp() {
     })
       .then((response) => {
         if (response.ok) {
+          console.log("Cuenta creada correctamente");
           return response.text();
         } else {
-          throw new Error("Error al crear la cuenta");
+          console.log(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
         }
       })
       .catch((error) => {
-        console.error(error);
-        alert("Error al crear la cuenta");
+        alert("Error 500 al crear la cuenta: ", error);
       });
   }
 
