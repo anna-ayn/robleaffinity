@@ -51,12 +51,7 @@ export default function SignUp() {
 
   function handlePhotoChange(event) {
     const file = event.target.files[0];
-    const reader = new FileReader();
-    reader.onloadend = function () {
-      const photo = reader.result;
-      setPhoto(photo); // Set the photo state with the loaded image
-    };
-    reader.readAsDataURL(file);
+    setPhoto(file);
   }
 
   const [location, setLocation] = useState(null);
@@ -102,6 +97,7 @@ export default function SignUp() {
         tema: themeValor,
         longitud: location.longitude,
         latitud: location.latitude,
+        foto: photo,
       }),
     })
       .then((response) => {
@@ -362,6 +358,15 @@ export default function SignUp() {
                     required
                   />
                 </div>
+                {photo && (
+                  <div className="flex justify-center mt-5">
+                    <img
+                      src={URL.createObjectURL(photo)}
+                      alt="Uploaded Photo"
+                      className="max-w-[200px] max-h-[200px]"
+                    />
+                  </div>
+                )}
               </div>
               <div className="flex justify-between">
                 <button

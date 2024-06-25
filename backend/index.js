@@ -30,6 +30,7 @@ app.post("/api/cuentas", async (req, res) => {
     tema,
     longitud,
     latitud,
+    foto,
   } = req.body;
 
   try {
@@ -78,6 +79,11 @@ app.post("/api/cuentas", async (req, res) => {
     const values2 = [id_cuenta.rows[0].id_cuenta, sexo, longitud, latitud];
 
     await client.query(query3, values2);
+
+    const query4 = "INSERT INTO tiene_foto(id_cuenta, foto) VALUES($1, $2)";
+    const values3 = [id_cuenta.rows[0].id_cuenta, foto];
+
+    await client.query(query4, values3);
 
     return res
       .status(201)
