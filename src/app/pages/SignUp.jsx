@@ -1,28 +1,107 @@
 import "../App.css";
 import logo from "../img/Logo.png";
-import { useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
-function SignUp() {
+export default function SignUp() {
+  const [currentPage, setCurrentPage] = useState(1);
   const nombre = useRef();
   const apellido = useRef();
   const fechaNacimiento = useRef();
   const telefono = useRef();
   const email = useRef();
   const contrasena = useRef();
+  const sexo = useRef();
+  const language = useRef();
+  const notifications = useRef();
+  const theme = useRef();
+
+  const [nombreValor, setNombreValor] = useState("");
+  const [apellidoValor, setApellidoValor] = useState("");
+  const [fechaNacimientoValor, setFechaNacimientoValor] = useState("");
+  const [telefonoValor, setTelefonoValor] = useState("");
+  const [emailValor, setEmailValor] = useState("");
+  const [contrasenaValor, setContrasenaValor] = useState("");
+  const [sexoValor, setSexoValor] = useState("");
+  const [languageValor, setLanguageValor] = useState("");
+  const [notificationsValor, setNotificationsValor] = useState("");
+  const [themeValor, setThemeValor] = useState("");
+
+  const [photo, setPhoto] = useState(null);
+
+  function handleNextPage() {
+    if (currentPage === 1) {
+      setNombreValor(nombre.current.value);
+      setApellidoValor(apellido.current.value);
+      setFechaNacimientoValor(fechaNacimiento.current.value);
+      setTelefonoValor(telefono.current.value);
+      setEmailValor(email.current.value);
+      setContrasenaValor(contrasena.current.value);
+      setSexoValor(sexo.current.value);
+    } else if (currentPage === 2) {
+      setLanguageValor(language.current.value);
+      setNotificationsValor(notifications.current.value);
+      setThemeValor(theme.current.value);
+    }
+    setCurrentPage(currentPage + 1);
+  }
+
+  function handlePreviousPage() {
+    setCurrentPage(currentPage - 1);
+  }
+
+  function handlePhotoChange(event) {
+    const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = function () {
+      const photo = reader.result;
+      setPhoto(photo); // Set the photo state with the loaded image
+    };
+    reader.readAsDataURL(file);
+  }
+
+  const [location, setLocation] = useState(null);
+
+  useEffect(() => {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const latitude = position.coords.latitude;
+          const longitude = position.coords.longitude;
+          setLocation({ latitude, longitude });
+          console.log("Latitude is :", latitude);
+          console.log("Longitude is :", longitude);
+        },
+        (error) => {
+          console.error(error);
+          // Handle error if user denies permission or if there's an error retrieving the location
+        }
+      );
+    } else {
+      console.error("Geolocation is not supported by this browser.");
+      // Handle case where geolocation is not supported
+    }
+  }, []);
 
   function handleSubmit() {
+    console.log(languageValor);
     fetch("http://localhost:3001/api/cuentas", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        nombre: nombre.current.value,
-        apellido: apellido.current.value,
-        fecha_nacimiento: fechaNacimiento.current.value,
-        telefono: telefono.current.value,
-        email: email.current.value,
-        contrasena: contrasena.current.value,
+        nombre: nombreValor,
+        apellido: apellidoValor,
+        fecha_nacimiento: fechaNacimientoValor,
+        telefono: telefonoValor,
+        email: emailValor,
+        contrasena: contrasenaValor,
+        sexo: sexoValor,
+        idioma: languageValor,
+        notificaciones: notificationsValor,
+        tema: themeValor,
+        longitud: location.longitude,
+        latitud: location.latitude,
       }),
     })
       .then((response) => {
@@ -59,115 +138,251 @@ function SignUp() {
       </h3>
       <div className="h-full w-full bg-white rounded-md bg-clip-padding backdrop-filter backdrop-blur-2xl bg-opacity-20 border border-gray-100">
         <form className="p-5 flex flex-col justify-between h-full">
-          <div className="flex flex-col md:flex-row justify-between">
-            <div className="mb-[15px] flex-grow">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                htmlFor="name"
-              >
-                Nombre
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="name"
-                type="text"
-                placeholder="Nombre"
-                ref={nombre}
-                required
-              />
+          {currentPage === 1 && (
+            <div>
+              <div className="flex flex-col md:flex-row justify-between">
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    htmlFor="name"
+                  >
+                    Nombre
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="name"
+                    type="text"
+                    placeholder="Nombre"
+                    ref={nombre}
+                    required
+                  />
+                </div>
+                <div className="w-[1rem]"></div>
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    htmlFor="surname"
+                  >
+                    Apellido
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="surname"
+                    type="text"
+                    placeholder="Apellido"
+                    ref={apellido}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex flex-col md:flex-row justify-between">
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    htmlFor="gender"
+                  >
+                    Sexo
+                  </label>
+                  <select
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="gender"
+                    ref={sexo}
+                    required
+                  >
+                    <option value="F">Femenino</option>
+                    <option value="M">Masculino</option>
+                    <option value="otro">Otro</option>
+                  </select>
+                </div>
+                <div className="w-[1rem]"></div>
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    htmlFor="birthdate"
+                  >
+                    Fecha de Nacimiento
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700  leading-tight focus:outline-none focus:shadow-outline"
+                    id="birthdate"
+                    type="date"
+                    placeholder="Fecha de Nacimiento"
+                    ref={fechaNacimiento}
+                    required
+                  />
+                </div>
+                <div className="w-[1rem]"></div>
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    htmlFor="phone"
+                  >
+                    Teléfono
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="phone"
+                    type="tel"
+                    placeholder="Teléfono"
+                    ref={telefono}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                  htmlFor="email"
+                >
+                  Correo electrónico
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="email"
+                  type="email"
+                  placeholder="hola@ejemplo.com"
+                  ref={email}
+                  required
+                />
+              </div>
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                  htmlFor="password"
+                >
+                  Contraseña
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="password"
+                  type="password"
+                  placeholder="********"
+                  ref={contrasena}
+                  required
+                />
+              </div>
+              <div className="flex justify-end">
+                <button
+                  className="bg-[#ff8787] hover:bg-[#fab6b6] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  type="button"
+                  onClick={handleNextPage}
+                >
+                  Siguiente
+                </button>
+              </div>
             </div>
-            <div className="w-[1rem]"></div>
-            <div className="mb-[15px] flex-grow">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                htmlFor="surname"
-              >
-                Apellido
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="surname"
-                type="text"
-                placeholder="Apellido"
-                ref={apellido}
-                required
-              />
+          )}
+          {currentPage === 2 && (
+            <div>
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                  htmlFor="theme"
+                >
+                  Tema
+                </label>
+                <select
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="theme"
+                  ref={theme}
+                  required
+                >
+                  <option value="True">Claro</option>
+                  <option value="False">Oscuro</option>
+                </select>
+              </div>
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                  htmlFor="language"
+                >
+                  Idioma
+                </label>
+                <select
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="language"
+                  ref={language}
+                  required
+                >
+                  <option value="ESP">Español</option>
+                  <option value="ENG">Inglés</option>
+                </select>
+              </div>
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                  htmlFor="notifications"
+                >
+                  Notificaciones
+                </label>
+                <select
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="notifications"
+                  ref={notifications}
+                  required
+                >
+                  <option value="True">Activadas</option>
+                  <option value="False">Desactivadas</option>
+                </select>
+              </div>
+              <div className="flex justify-between">
+                <button
+                  className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  type="button"
+                  onClick={handlePreviousPage}
+                >
+                  Atrás
+                </button>
+                <button
+                  className="bg-[#ff8787] hover:bg-[#fab6b6] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  type="button"
+                  onClick={handleNextPage}
+                >
+                  Siguiente
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col md:flex-row justify-between">
-            <div className="mb-[15px] flex-grow">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                htmlFor="birthdate"
-              >
-                Fecha de Nacimiento
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700  leading-tight focus:outline-none focus:shadow-outline"
-                id="birthdate"
-                type="date"
-                placeholder="Fecha de Nacimiento"
-                ref={fechaNacimiento}
-                required
-              />
+          )}
+          {currentPage === 3 && (
+            <div>
+              <div className="flex flex-col md:flex-row justify-between">
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    htmlFor="photo"
+                  >
+                    Sube una foto para tu perfil
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="photo"
+                    type="file"
+                    accept="image/*"
+                    onChange={handlePhotoChange}
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex justify-between">
+                <button
+                  className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  type="button"
+                  onClick={handlePreviousPage}
+                >
+                  Atrás
+                </button>
+                <button
+                  className="pulse  text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                  type="button"
+                  onClick={handleSubmit}
+                >
+                  Crear cuenta
+                </button>
+              </div>
             </div>
-            <div className="w-[1rem]"></div>
-            <div className="mb-[15px] flex-grow">
-              <label
-                className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                htmlFor="phone"
-              >
-                Teléfono
-              </label>
-              <input
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="phone"
-                type="tel"
-                placeholder="Teléfono"
-                ref={telefono}
-                required
-              />
-            </div>
-          </div>
-          <div className="mb-[15px] flex-grow">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2 text-left"
-              htmlFor="email"
-            >
-              Correo electrónico
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="email"
-              type="email"
-              placeholder="hola@ejemplo.com"
-              ref={email}
-              required
-            />
-          </div>
-          <div className="mb-[15px] flex-grow">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2 text-left"
-              htmlFor="password"
-            >
-              Contraseña
-            </label>
-            <input
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-              id="password"
-              type="password"
-              placeholder="********"
-              ref={contrasena}
-              required
-            />
-          </div>
+          )}
         </form>
       </div>
-      <button className="pulse text-lg sm:text-xl p-2" onClick={handleSubmit}>
-        Crear cuenta
-      </button>
     </div>
   );
 }
-
-export default SignUp;
