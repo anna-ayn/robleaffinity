@@ -46,6 +46,19 @@ export default function SignUp() {
   }
 
   function handlePreviousPage() {
+    if (currentPage === 1) {
+      setNombreValor(nombre.current.value);
+      setApellidoValor(apellido.current.value);
+      setFechaNacimientoValor(fechaNacimiento.current.value);
+      setTelefonoValor(telefono.current.value);
+      setEmailValor(email.current.value);
+      setContrasenaValor(contrasena.current.value);
+      setSexoValor(sexo.current.value);
+    } else if (currentPage === 2) {
+      setLanguageValor(language.current.value);
+      setNotificationsValor(notifications.current.value);
+      setThemeValor(theme.current.value);
+    }
     setCurrentPage(currentPage - 1);
   }
 
