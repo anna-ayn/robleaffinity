@@ -25,7 +25,7 @@ export function getClient() {
 
   // setear el esquema a tinder_viejos_egresados
   client.query(
-    "ALTER DATABASE soft3bd SET search_path TO tinder_viejos_egresados"
+    "ALTER DATABASE robleaffinity SET search_path TO tinder_viejos_egresados"
   );
 
   // setear el tipo de estilo de la fecha SET DATESTYLE TO 'European';
