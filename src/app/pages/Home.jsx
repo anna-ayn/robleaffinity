@@ -8,6 +8,11 @@ function Home() {
   const goRegister = () => {
     navigate("/sign-up");
   };
+
+  const goLogIn = () => {
+    navigate("/log-in");
+  };
+
   return (
     <div className="flex flex-col items-center mx-auto w-full font-medium text-white max-w-auto">
       <img
@@ -39,9 +44,12 @@ function Home() {
       <button className="pulse text-lg sm:text-xl p-2" onClick={goRegister}>
         Crear una cuenta
       </button>
-      <div className="mt-7 text-m leading-4 text-center underline">
+      <a
+        className="mt-7 text-m leading-4 text-center underline"
+        onClick={goLogIn}
+      >
         ¿Ya tienes una cuenta? Inicia sesión
-      </div>
+      </a>
     </div>
   );
 }

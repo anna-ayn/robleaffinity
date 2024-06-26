@@ -91,7 +91,8 @@ export default function SignUp() {
   }, []);
 
   function handleSubmit() {
-    console.log(languageValor);
+    const formData = new FormData();
+    formData.append("photo", photo);
     fetch("http://localhost:3001/api/cuentas", {
       method: "POST",
       headers: {
@@ -110,7 +111,7 @@ export default function SignUp() {
         tema: themeValor,
         longitud: location.longitude,
         latitud: location.latitude,
-        foto: photo,
+        foto: formData,
       }),
     })
       .then((response) => {
