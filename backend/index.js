@@ -1,18 +1,26 @@
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
+import multer from "multer";
 import { createAccount, login, getData } from "./cuenta.js";
 
 const app = express();
 const port = 3001;
 
-app.use(cors());
-
-app.use(bodyParser.json());
+app.use(
+  cors({
+    origin: true,
+    credentials: true,
+    methods: ["GET", "POST"],
+  })
+);
 
 app.use(express.json());
+app.use(bodyParser.json());
 
-app.post("/api/cuentas", createAccount);
+const upload = multer();
+
+app.post("/api/cuentas", upload.none(), createAccount);
 app.post("/api/login", login);
 app.get("/api/getData", getData);
 

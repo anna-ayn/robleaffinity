@@ -79,10 +79,15 @@ export async function createAccount(req, res) {
 
     await client.query(query3, values2);
 
-    const query4 = "INSERT INTO tiene_foto(id_cuenta, foto) VALUES($1, $2)";
+    const query4 =
+      "INSERT INTO tiene_foto(id_cuenta, foto) VALUES($1, decode($2, 'base64'))";
     const values3 = [id_cuenta.rows[0].id_cuenta, foto];
 
     await client.query(query4, values3);
+
+    console.log("Cuenta insertada correctamente" + id_cuenta.rows[0].id_cuenta);
+    console.log("Perfil insertado correctamente");
+    console.log("Foto insertada correctamente");
 
     return res
       .status(201)
@@ -166,12 +171,6 @@ export async function getData(req, res) {
       "SELECT encode(foto, 'base64') FROM tiene_foto WHERE id_cuenta = $1";
     const fotosRows = await client.query(query3, [userId.id_cuenta]);
 
-    console.log(fotosRows.rows);
-    let fotoarray = [];
-    fotosRows.rows.forEach((row) => {
-      fotoarray.push(row.foto);
-    });
-
     // solamente el nombre, apellido, fecha de nacimiento, email, telefono, idioma, notificaciones, tema
     // sexo, descripcion, latitud, longitud y fotos
     const userData = {
@@ -187,7 +186,7 @@ export async function getData(req, res) {
       descripcion: data2.rows[0].descripcion,
       latitud: data2.rows[0].latitud,
       longitud: data2.rows[0].longitud,
-      fotos: fotoarray,
+      fotos: fotosRows.rows.map((row) => row.encode),
     };
 
     console.log(userData);

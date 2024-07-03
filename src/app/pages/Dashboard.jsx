@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import "../App.css";
 import logo from "../img/Logo.png";
 
@@ -18,6 +18,7 @@ function Dashboard() {
       } else {
         res.json().then(async (res) => {
           setUserData(res);
+          console.log(res.fotos.map((foto) => foto.replace(/\n/g, "").length));
         });
       }
     });
@@ -46,7 +47,7 @@ function Dashboard() {
           <p>Tu sexo es {userData.sexo}</p>
           <p>Tu foto(s) de perfil son:</p>
           {userData.fotos.map((foto, index) => (
-            <img key={index} src={`data:image/png;base64,${foto}`} />
+            <img key={index} src={`data:image/jpg;base64,${foto}`} />
           ))}
         </div>
       ) : (

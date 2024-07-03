@@ -27,6 +27,7 @@ export default function SignUp() {
   const [themeValor, setThemeValor] = useState("");
 
   const [photo, setPhoto] = useState(null);
+  const [photoData, setPhotoData] = useState(null);
 
   function handleNextPage() {
     if (currentPage === 1) {
@@ -64,6 +65,11 @@ export default function SignUp() {
 
   function handlePhotoChange(event) {
     const file = event.target.files[0];
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setPhotoData(reader.result.split(",")[1]); // get base64 string
+    };
+    reader.readAsDataURL(file);
     setPhoto(file);
   }
 
@@ -92,27 +98,27 @@ export default function SignUp() {
 
   function handleSubmit() {
     const formData = new FormData();
-    formData.append("photo", photo);
+    formData.append("nombre", nombreValor);
+    formData.append("apellido", apellidoValor);
+    formData.append("fecha_nacimiento", fechaNacimientoValor);
+    formData.append("telefono", telefonoValor);
+    formData.append("email", emailValor);
+    formData.append("contrasena", contrasenaValor);
+    formData.append("sexo", sexoValor);
+    formData.append("idioma", languageValor);
+    formData.append("notificaciones", notificationsValor);
+    formData.append("tema", themeValor);
+    formData.append("longitud", location.longitude);
+    formData.append("latitud", location.latitude);
+    formData.append("foto", photoData);
+    console.log(photoData);
+
     fetch("http://localhost:3001/api/cuentas", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
+        Accept: "./multipart/form-data",
       },
-      body: JSON.stringify({
-        nombre: nombreValor,
-        apellido: apellidoValor,
-        fecha_nacimiento: fechaNacimientoValor,
-        telefono: telefonoValor,
-        email: emailValor,
-        contrasena: contrasenaValor,
-        sexo: sexoValor,
-        idioma: languageValor,
-        notificaciones: notificationsValor,
-        tema: themeValor,
-        longitud: location.longitude,
-        latitud: location.latitude,
-        foto: formData,
-      }),
+      body: formData,
     })
       .then((response) => {
         if (response.ok) {
