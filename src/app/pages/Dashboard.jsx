@@ -18,7 +18,6 @@ function Dashboard() {
       } else {
         res.json().then(async (res) => {
           setUserData(res);
-          console.log(res.fotos.map((foto) => foto.replace(/\n/g, "").length));
         });
       }
     });

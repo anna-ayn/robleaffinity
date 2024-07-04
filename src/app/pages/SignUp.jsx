@@ -1,28 +1,77 @@
 import "../App.css";
 import logo from "../img/Logo.png";
 import { useState, useEffect } from "react";
+import ModalSuccess from "../components/ModalSuccess";
+import validator from "validator";
 
 export default function SignUp() {
   const [listaInstituciones, setListaInstituciones] = useState([]);
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [nombre, setNombre] = useState(null);
-  const [apellido, setApellido] = useState(null);
-  const [fechaNacimiento, setFechaNacimiento] = useState(null);
-  const [telefono, setTelefono] = useState(null);
-  const [email, setEmail] = useState(null);
-  const [contrasena, setContrasena] = useState(null);
+  const [nombre, setNombre] = useState("");
+  const [apellido, setApellido] = useState("");
+  const [fechaNacimiento, setFechaNacimiento] = useState("");
+  const [telefono, setTelefono] = useState("");
+  const [email, setEmail] = useState("");
+  const [contrasena, setContrasena] = useState("");
   const [sexo, setSexo] = useState("F");
   const [language, setLanguage] = useState("ESP");
   const [notifications, setNotifications] = useState("True");
   const [theme, setTheme] = useState("True");
   const [photosData, setPhotosData] = useState(null);
-  const [titulo, setTitulo] = useState(null);
-  const [anio_inicio, setAnioInicio] = useState(null);
-  const [anio_fin, setAnioFin] = useState(null);
+  const [titulo, setTitulo] = useState("");
+  const [anio_inicio, setAnioInicio] = useState("");
+  const [anio_fin, setAnioFin] = useState("");
   const [dominio_institucion, setDominioInstitucion] = useState(null);
+  const [cuentaCreadaExitosamente, setCuentaCreadaExitosamente] =
+    useState(false);
 
   function handleNextPage() {
+    // verificar que los campos estén llenos
+    if (currentPage === 1) {
+      if (
+        nombre === "" ||
+        apellido === "" ||
+        fechaNacimiento == "" ||
+        telefono === "" ||
+        email === "" ||
+        contrasena === ""
+      ) {
+        alert("Por favor, llene todos los campos");
+        return;
+      }
+
+      if (!validator.isEmail(email)) {
+        alert("Por favor, ingrese un correo electrónico válido");
+        return;
+      }
+
+      if (!validator.isNumeric(telefono)) {
+        alert("Por favor, ingrese un número de teléfono válido");
+        return;
+      }
+    } else if (currentPage === 2) {
+      if (
+        dominio_institucion === null ||
+        titulo === "" ||
+        anio_inicio === "" ||
+        anio_fin === ""
+      ) {
+        alert("Por favor, llene todos los campos");
+        return;
+      }
+    } else if (currentPage === 3) {
+      if (theme === null || language === null || notifications === null) {
+        alert("Por favor, llene todos los campos");
+        return;
+      }
+    } else if (currentPage === 4) {
+      if (photosData === null) {
+        alert("Por favor, suba una foto");
+        return;
+      }
+    }
+
     setCurrentPage(currentPage + 1);
   }
 
@@ -32,6 +81,11 @@ export default function SignUp() {
 
   function handlePhotoChange(event) {
     const files = event.target.files;
+
+    if (files.length === 0) {
+      setPhotosData(null);
+      return;
+    }
 
     const fotosData = [];
     const promises = [];
@@ -142,8 +196,13 @@ export default function SignUp() {
       .then((response) => {
         if (response.ok) {
           console.log("Cuenta creada correctamente");
+          setCuentaCreadaExitosamente(true);
           return response.text();
         } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+
           console.log(
             response.text().then((text) => {
               throw new Error(text);
@@ -316,6 +375,11 @@ export default function SignUp() {
           )}
           {currentPage === 2 && (
             <div>
+              <div>
+                <h3 className="text-gray-700 font-bold">
+                  Selecciona una institución que has estudiado
+                </h3>
+              </div>
               <div className="mb-[15px] flex-grow">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2 text-left"
@@ -378,6 +442,8 @@ export default function SignUp() {
                     placeholder="Año de inicio"
                     onChange={(e) => setAnioInicio(e.target.value)}
                     value={anio_inicio}
+                    min="1950"
+                    max={new Date().getFullYear()}
                     required
                   />
                 </div>
@@ -396,6 +462,8 @@ export default function SignUp() {
                     placeholder="Año de fin"
                     onChange={(e) => setAnioFin(e.target.value)}
                     value={anio_fin}
+                    min="1950"
+                    max={new Date().getFullYear()}
                     required
                   />
                 </div>
@@ -544,6 +612,12 @@ export default function SignUp() {
           )}
         </form>
       </div>
+      {cuentaCreadaExitosamente && (
+        <ModalSuccess
+          title="¡Cuenta creada exitosamente!"
+          message="Tu cuenta ha sido creada exitosamente. ¡Bienvenido a la comunidad!"
+        />
+      )}
     </div>
   );
 }
