@@ -23,39 +23,25 @@ export async function createAccount(req, res) {
     telefono,
     email,
     contrasena,
-    sexo,
     idioma,
     notificaciones,
     tema,
+    sexo,
     longitud,
     latitud,
-    foto,
+    fotos,
+    dominio_institucion,
+    titulo,
+    anio_inicio,
+    anio_fin,
   } = req.body;
 
   try {
-    const checkQuery = "SELECT * FROM cuenta WHERE email = $1";
-    const checkResult = await client.query(checkQuery, [email]);
-
-    if (checkResult.rows.length > 0) {
-      return res.status(400).json({
-        message: "El correo electrónico ya está registrado",
-      });
-    }
-
-    const checkQuery2 = "SELECT * FROM cuenta WHERE telefono = $1";
-    const checkResult2 = await client.query(checkQuery2, [telefono]);
-
-    if (checkResult2.rows.length > 0) {
-      return res.status(400).json({
-        message: "El número de teléfono ya está registrado",
-      });
-    }
-
     const salt = await bcrypt.genSalt(saltRounds);
     const hash = await bcrypt.hash(contrasena, salt);
 
-    const query1 =
-      "INSERT INTO cuenta(nombre, apellido, fecha_nacimiento, telefono, email, contrasena, idioma, notificaciones, tema) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9)";
+    const query =
+      "SELECT create_new_user($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::TEXT[], $14, $15, $16, $17)";
     const values = [
       nombre,
       apellido,
@@ -66,29 +52,18 @@ export async function createAccount(req, res) {
       idioma,
       notificaciones,
       tema,
+      sexo,
+      latitud,
+      longitud,
+      fotos,
+      dominio_institucion,
+      titulo,
+      anio_inicio,
+      anio_fin,
     ];
 
-    await client.query(query1, values);
-
-    const query2 = "SELECT id_cuenta FROM cuenta WHERE email = $1";
-    const id_cuenta = await client.query(query2, [email]);
-
-    const query3 =
-      "INSERT INTO perfil(id_cuenta, sexo, longitud, latitud) VALUES($1, $2, $3, $4)";
-    const values2 = [id_cuenta.rows[0].id_cuenta, sexo, longitud, latitud];
-
-    await client.query(query3, values2);
-
-    const query4 =
-      "INSERT INTO tiene_foto(id_cuenta, foto) VALUES($1, decode($2, 'base64'))";
-    const values3 = [id_cuenta.rows[0].id_cuenta, foto];
-
-    await client.query(query4, values3);
-
-    console.log("Cuenta insertada correctamente" + id_cuenta.rows[0].id_cuenta);
-    console.log("Perfil insertado correctamente");
-    console.log("Foto insertada correctamente");
-
+    await client.query(query, values);
+    console.log("Cuenta creada exitosamente! ya puedes iniciar sesion");
     return res
       .status(201)
       .json({ success: true, message: "Cuenta insertada correctamente" });
@@ -188,8 +163,6 @@ export async function getData(req, res) {
       longitud: data2.rows[0].longitud,
       fotos: fotosRows.rows.map((row) => row.encode),
     };
-
-    console.log(userData);
 
     // Envía los datos del usuario como respuesta
     res.json(userData);

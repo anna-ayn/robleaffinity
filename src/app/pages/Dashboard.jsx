@@ -45,9 +45,13 @@ function Dashboard() {
           </p>
           <p>Tu tema de la app es {userData.tema ? "Claro" : "Oscuro"}</p>
           <p>Tu sexo es {userData.sexo}</p>
-          <p>Tu foto(s) de perfil son:</p>
+          <p>Tu(s) foto(s) de perfil son:</p>
           {userData.fotos.map((foto, index) => (
-            <img key={index} src={`data:image/jpg;base64,${foto}`} />
+            <img
+              key={index}
+              src={`data:image/jpg;base64,${foto}`}
+              className="w-[20%] m-auto"
+            />
           ))}
         </div>
       ) : (
