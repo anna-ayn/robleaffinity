@@ -31,7 +31,8 @@ export async function createAccount(req, res) {
     latitud,
     fotos,
     dominio_institucion,
-    titulo,
+    grado,
+    especialidad,
     anio_inicio,
     anio_fin,
   } = req.body;
@@ -41,7 +42,7 @@ export async function createAccount(req, res) {
     const hash = await bcrypt.hash(contrasena, salt);
 
     const query =
-      "SELECT create_new_user($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::TEXT[], $14, $15, $16, $17)";
+      "SELECT create_new_user($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13::TEXT[], $14, $15, $16, $17, $18)";
     const values = [
       nombre,
       apellido,
@@ -57,7 +58,8 @@ export async function createAccount(req, res) {
       longitud,
       fotos,
       dominio_institucion,
-      titulo,
+      grado,
+      especialidad,
       anio_inicio,
       anio_fin,
     ];

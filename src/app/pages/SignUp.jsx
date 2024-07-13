@@ -19,7 +19,8 @@ export default function SignUp() {
   const [notifications, setNotifications] = useState("True");
   const [theme, setTheme] = useState("True");
   const [photosData, setPhotosData] = useState(null);
-  const [titulo, setTitulo] = useState("");
+  const [grado, setGrado] = useState("");
+  const [especialidad, setEspecialidad] = useState("");
   const [anio_inicio, setAnioInicio] = useState("");
   const [anio_fin, setAnioFin] = useState("");
   const [dominio_institucion, setDominioInstitucion] = useState(null);
@@ -53,7 +54,8 @@ export default function SignUp() {
     } else if (currentPage === 2) {
       if (
         dominio_institucion === null ||
-        titulo === "" ||
+        grado === "" ||
+        especialidad == "" ||
         anio_inicio === "" ||
         anio_fin === ""
       ) {
@@ -145,11 +147,9 @@ export default function SignUp() {
         if (response.ok) {
           return response.json();
         } else {
-          console.log(
-            response.text().then((text) => {
-              throw new Error(text);
-            })
-          );
+          response.text().then((text) => {
+            alert(Error(text));
+          });
         }
       })
       .then((data) => {
@@ -182,7 +182,8 @@ export default function SignUp() {
       formData.append("fotos[]", photosData[i]);
     }
     formData.append("dominio_institucion", dominio_institucion);
-    formData.append("titulo", titulo);
+    formData.append("grado", grado);
+    formData.append("especialidad", grado);
     formData.append("anio_inicio", anio_inicio);
     formData.append("anio_fin", anio_fin);
 
@@ -413,17 +414,39 @@ export default function SignUp() {
               <div className="mb-[15px] flex-grow">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                  htmlFor="grade"
+                >
+                  Grado
+                </label>
+                <select
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  id="grade"
+                  onChange={(e) => setGrado(e.target.value)}
+                  value={grado}
+                  required
+                >
+                  <option value="Maestria">Maestría</option>
+                  <option value="Master">Master</option>
+                  <option value="Especializacion">Especialización</option>
+                  <option value="Diplomado">Diplomado</option>
+                  <option value="Doctorado">Doctorado</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
                   htmlFor="title"
                 >
-                  Título
+                  Especialidad
                 </label>
                 <input
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="title"
                   type="text"
-                  placeholder="Título"
-                  onChange={(e) => setTitulo(e.target.value)}
-                  value={titulo}
+                  placeholder="Especialidad"
+                  onChange={(e) => setEspecialidad(e.target.value)}
+                  value={especialidad}
                   required
                 />
               </div>
