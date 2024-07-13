@@ -4,7 +4,8 @@ export async function getInstituciones(req, res) {
   const client = getClient();
 
   try {
-    const query = "SELECT * FROM get_all_Institutions()";
+    const query =
+      "SELECT r_dominio AS dominio, r_nombre AS nombre FROM get_all_Institutions()";
     const data = await client.query(query);
 
     // Envía los datos de las instituciones como respuesta

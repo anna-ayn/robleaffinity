@@ -289,7 +289,7 @@ export default function SignUp() {
                   >
                     <option value="F">Femenino</option>
                     <option value="M">Masculino</option>
-                    <option value="otro">Otro</option>
+                    <option value="Otro">Otro</option>
                   </select>
                 </div>
                 <div className="w-[1rem]"></div>

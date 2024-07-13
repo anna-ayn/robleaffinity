@@ -37,6 +37,8 @@ export async function createAccount(req, res) {
     anio_fin,
   } = req.body;
 
+  console.log(req.body);
+
   try {
     const salt = await bcrypt.genSalt(saltRounds);
     const hash = await bcrypt.hash(contrasena, salt);
