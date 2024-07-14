@@ -24,8 +24,8 @@ export default function SignUp() {
   const [anio_inicio, setAnioInicio] = useState("");
   const [anio_fin, setAnioFin] = useState("");
   const [dominio_institucion, setDominioInstitucion] = useState(null);
-  const [cuentaCreadaExitosamente, setCuentaCreadaExitosamente] =
-    useState(false);
+  const [descripcion, setDescripcion] = useState("");
+  const [mostrarModalSuccess, setmostrarModalSuccess] = useState(false);
 
   function handleNextPage() {
     // verificar que los campos estén llenos
@@ -178,6 +178,7 @@ export default function SignUp() {
     formData.append("tema", theme);
     formData.append("longitud", location.longitude);
     formData.append("latitud", location.latitude);
+    formData.append("descripcion", descripcion);
     for (let i = 0; i < photosData.length; i++) {
       formData.append("fotos[]", photosData[i]);
     }
@@ -197,7 +198,7 @@ export default function SignUp() {
       .then((response) => {
         if (response.ok) {
           console.log("Cuenta creada correctamente");
-          setCuentaCreadaExitosamente(true);
+          setmostrarModalSuccess(true);
           return response.text();
         } else {
           response.text().then((text) => {
@@ -589,6 +590,19 @@ export default function SignUp() {
                 <div className="mb-[15px] flex-grow">
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    htmlFor="description"
+                  >
+                    Agrega una descripción a tu perfil
+                  </label>
+                  <textarea
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="description"
+                    placeholder="Hola, me llamo..."
+                    onChange={(e) => setDescripcion(e.target.value)}
+                    value={descripcion}
+                  ></textarea>
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
                     htmlFor="photo"
                   >
                     Sube una o varias fotos para tu perfil
@@ -635,10 +649,12 @@ export default function SignUp() {
           )}
         </form>
       </div>
-      {cuentaCreadaExitosamente && (
+      {mostrarModalSuccess && (
         <ModalSuccess
           title="¡Cuenta creada exitosamente!"
           message="Tu cuenta ha sido creada exitosamente. ¡Bienvenido a la comunidad!"
+          goTo="preferences"
+          show={setmostrarModalSuccess}
         />
       )}
     </div>

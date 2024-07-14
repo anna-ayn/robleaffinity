@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import "../App.css";
-import logo from "../img/Logo.png";
 
 function Dashboard() {
   const [userData, setUserData] = useState(null);
@@ -23,15 +22,15 @@ function Dashboard() {
     });
   }, []);
 
+  const logOut = () => {
+    localStorage.removeItem("token");
+    window.location.href = "/";
+  };
+
   return (
     <>
       {userData ? (
         <div>
-          <img
-            src={logo}
-            onClick={() => (window.location.href = "/")}
-            className="self-stretch w-[80%] sm:w-[30%] m-auto cursor-pointer"
-          />
           <h1>
             Bienvenido, {userData.nombre} {userData.apellido}!
           </h1>
@@ -56,6 +55,12 @@ function Dashboard() {
       ) : (
         <p>Loading user data...</p>
       )}
+      <button
+        onClick={logOut}
+        className="bg-[#de5466] hover:bg-[#e02841] text-white font-bold py-2 px-4 rounded"
+      >
+        Salir
+      </button>
     </>
   );
 }

@@ -1,10 +1,20 @@
 import "../App.css";
 import PropTypes from "prop-types";
 
-export default function ModalSuccess({ title, message }) {
+export default function ModalSuccess({ title, message, show, goTo }) {
   ModalSuccess.propTypes = {
     title: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
+    show: PropTypes.func.isRequired,
+    goTo: PropTypes.string,
+  };
+
+  const goToPreferences = () => {
+    window.location.href = "/preferences";
+  };
+
+  const goToDashboard = () => {
+    window.location.href = "/dashboard";
   };
 
   return (
@@ -31,18 +41,45 @@ export default function ModalSuccess({ title, message }) {
                 </h3>
                 <div className="mt-2">
                   <p className="text-sm text-gray-500">{message}</p>
+                  {goTo === "preferences" && (
+                    <p className="text-sm text-gray-500">
+                      ¿Deseas configurar tus preferencias?
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
           </div>
           <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-            <button
-              type="button"
-              className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
-              onClick={() => (window.location.href = "/log-in")}
-            >
-              Ok
-            </button>
+            {goTo === "preferences" && (
+              <div>
+                <button
+                  type="button"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#de5466] text-base font-medium text-white hover:bg-[#e02841] focus:outline-none focus:ring-2 focus:ring-offset-2  sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={goToDashboard}
+                >
+                  No
+                </button>
+                <button
+                  type="button"
+                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
+                  onClick={goToPreferences}
+                >
+                  Si
+                </button>
+              </div>
+            )}
+            {goTo === null && (
+              <button
+                type="button"
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                onClick={() => {
+                  show(false);
+                }}
+              >
+                Aceptar
+              </button>
+            )}
           </div>
         </div>
       </div>
