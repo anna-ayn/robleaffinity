@@ -69,6 +69,7 @@
 
 .thumb--right {
   z-index: 4;
+  padding-left: 2px;
 }
 
 /* For Chrome browsers */

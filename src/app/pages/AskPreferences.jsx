@@ -1,18 +1,40 @@
 import "../App.css";
 import { useState } from "react";
 import MultiRangeSlider from "../components/multiRangeSlider/MultiRangeSlider";
+import MultiSelect from "../components/MultiSelect";
 
 function Home() {
-  const [grado, setGrado] = useState(null);
+  const [grado, setGrado] = useState("null");
   const [maxDistancia, setMaxDistancia] = useState(5);
   const [minEdad, setMinEdad] = useState(30);
   const [maxEdad, setMaxEdad] = useState(99);
   const [sexo, setSexo] = useState([]);
   const [orientacion, setOrientacion] = useState([]);
 
+  const genreOptions = [
+    { value: "F", label: "Femenino" },
+    { value: "M", label: "Masculino" },
+    { value: "Otro", label: "Otro" },
+  ];
+
+  const orientationOptions = [
+    { value: "Heterosexual", label: "Heterosexual" },
+    { value: "Gay", label: "Gay" },
+    { value: "Lesbiana", label: "Lesbiana" },
+    { value: "Bisexual", label: "Bisexual" },
+    { value: "Asexual", label: "Asexual" },
+    { value: "Demisexual", label: "Demisexual" },
+    { value: "Pansexual", label: "Pansexual" },
+    { value: "Queer", label: "Queer" },
+    { value: "Cuestionamiento", label: "Cuestionamiento" },
+    { value: "Buscando Chamba", label: "Buscando Chamba" },
+    { value: "Otro", label: "Otro" },
+  ];
+
   return (
     <div className="flex flex-col items-center mx-auto w-full font-medium text-white max-w-auto">
-      <div className="p-2 h-full w-full sm:w-[80%] bg-red-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100">
+      <div className="p-2 h-full w-[350px]  bg-red-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100">
+        <h3>Ajusta tus preferencias</h3>
         <form className="p-2">
           <div className="flex flex-col">
             <div className="mb-[15px] flex-grow">
@@ -28,6 +50,7 @@ function Home() {
                 onChange={(e) => setGrado(e.target.value)}
                 value={grado}
               >
+                <option value="null">Ninguno</option>
                 <option value="Maestria">Maestría</option>
                 <option value="Master">Master</option>
                 <option value="Especializacion">Especialización</option>
@@ -73,8 +96,8 @@ function Home() {
                 Rango de edad
               </label>
               <MultiRangeSlider
-                min={minEdad}
-                max={maxEdad}
+                min={30}
+                max={99}
                 setMin={setMinEdad}
                 setMax={setMaxEdad}
               />
@@ -86,41 +109,21 @@ function Home() {
               >
                 Preferencia de género
               </label>
-              <select
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="sexo"
-                onChange={(e) => setSexo(e.target.value)}
-                value={sexo}
-                required
-                multiple // Add the multiple attribute here
-              >
-                <option value="F">Femenino</option>
-                <option value="M">Masculino</option>
-                <option value="Otro">Otro</option>
-              </select>
+
+              <MultiSelect options={genreOptions} name="genre" fun={setSexo} />
             </div>
-            <div className="mt-[30px] mb-[15px] flex-grow">
+            <div className="mb-[15px] flex-grow">
               <label
                 className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                htmlFor="genre"
+                htmlFor="orientation"
               >
                 Preferencia de orientación sexual
               </label>
-              <select
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                id="gender"
-                onChange={(e) => setOrientacion(e.target.value)} // Update the state setter function here
-                value={orientacion} // Update the state value here
-                required
-                multiple // Add the multiple attribute here
-              >
-                <option value="Heterosexual">Heterosexual</option>
-                <option value="Homosexual">Homosexual</option>
-                <option value="Bisexual">Bisexual</option>
-                <option value="Pansexual">Pansexual</option>
-                <option value="Asexual">Asexual</option>
-                <option value="Otro">Otro</option>
-              </select>
+              <MultiSelect
+                options={orientationOptions}
+                name="orientation"
+                fun={setOrientacion}
+              />
             </div>
           </div>
         </form>
