@@ -12,6 +12,10 @@ function App() {
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/log-in" element={<LogIn />} />
         <Route path="/preferences" element={<AskPreferences />} />
+        <Route
+          path="/first-time-setting-preferences"
+          element={<AskPreferences firstTime={true} />}
+        />
         <Route path="/dashboard" element={<Dashboard />} />
 
         <Route path="*" element={<h1>404 Not Found</h1>} />

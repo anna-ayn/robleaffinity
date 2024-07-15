@@ -2,14 +2,21 @@ import "../App.css";
 import { useState } from "react";
 import MultiRangeSlider from "../components/multiRangeSlider/MultiRangeSlider";
 import MultiSelect from "../components/MultiSelect";
+import PropTypes from "prop-types";
+import ModalSuccess from "../components/ModalSuccess";
 
-function Home() {
-  const [grado, setGrado] = useState("null");
+function AskPreferences({ firstTime }) {
+  AskPreferences.propTypes = {
+    firstTime: PropTypes.bool,
+  };
+
+  const [grado, setGrado] = useState("");
   const [maxDistancia, setMaxDistancia] = useState(5);
   const [minEdad, setMinEdad] = useState(30);
   const [maxEdad, setMaxEdad] = useState(99);
   const [sexo, setSexo] = useState([]);
   const [orientacion, setOrientacion] = useState([]);
+  const [saved, setSaved] = useState(false);
 
   const genreOptions = [
     { value: "F", label: "Femenino" },
@@ -31,6 +38,49 @@ function Home() {
     { value: "Otro", label: "Otro" },
   ];
 
+  const onSave = () => {
+    if (firstTime) {
+      const dataJSON = {
+        estudio: grado,
+        distancia_maxima: maxDistancia,
+        min_edad: minEdad,
+        max_edad: maxEdad,
+        arr_prefSexos: sexo,
+        arr_prefOrientaciones: orientacion,
+      };
+
+      fetch("http://localhost:3001/api/insertPreferences", {
+        method: "POST",
+        headers: {
+          Accept: "./multipart/form-data",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(dataJSON),
+      })
+        .then((response) => {
+          if (response.ok) {
+            console.log("Preferencias guardadas con exito");
+            setSaved(true);
+            return response.text();
+          } else {
+            response.text().then((text) => {
+              alert(Error(text));
+            });
+
+            console.log(
+              response.text().then((text) => {
+                throw new Error(text);
+              })
+            );
+          }
+        })
+        .catch((error) => {
+          alert("Error 500 al guardar las preferencias: ", error);
+        });
+    }
+  };
+
   return (
     <div className="flex flex-col items-center mx-auto w-full font-medium text-white max-w-auto">
       <div className="p-2 h-full w-[350px]  bg-red-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100">
@@ -50,7 +100,7 @@ function Home() {
                 onChange={(e) => setGrado(e.target.value)}
                 value={grado}
               >
-                <option value="null">Ninguno</option>
+                <option value="">Ninguno</option>
                 <option value="Maestria">Maestría</option>
                 <option value="Master">Master</option>
                 <option value="Especializacion">Especialización</option>
@@ -126,10 +176,26 @@ function Home() {
               />
             </div>
           </div>
+          <button
+            className="pulse text-white font-bold py-2 px-4 rounded
+            focus:outline-none focus:shadow-outline"
+            type="button"
+            onClick={onSave}
+          >
+            Guardar
+          </button>
         </form>
       </div>
+      {saved && (
+        <ModalSuccess
+          title="Preferencias guardadas con exito"
+          message=""
+          show={setSaved}
+          goTo="dashboard"
+        />
+      )}
     </div>
   );
 }
 
-export default Home;
+export default AskPreferences;

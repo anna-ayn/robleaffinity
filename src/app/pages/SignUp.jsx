@@ -654,6 +654,8 @@ export default function SignUp() {
           title="¡Cuenta creada exitosamente!"
           message="Tu cuenta ha sido creada exitosamente. ¡Bienvenido a la comunidad!"
           goTo="preferences"
+          email={email}
+          password={contrasena}
           show={setmostrarModalSuccess}
         />
       )}

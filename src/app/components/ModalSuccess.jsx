@@ -1,16 +1,46 @@
 import "../App.css";
 import PropTypes from "prop-types";
 
-export default function ModalSuccess({ title, message, show, goTo }) {
+export default function ModalSuccess({
+  title,
+  message,
+  show,
+  goTo,
+  email,
+  password,
+}) {
   ModalSuccess.propTypes = {
     title: PropTypes.string.isRequired,
     message: PropTypes.string.isRequired,
     show: PropTypes.func.isRequired,
     goTo: PropTypes.string,
+    email: PropTypes.string,
+    password: PropTypes.string,
   };
 
   const goToPreferences = () => {
-    window.location.href = "/preferences";
+    const data = {
+      email: email,
+      contrasena: password,
+    };
+
+    fetch("http://localhost:3001/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.error) {
+          alert(res.error);
+        } else {
+          console.log(res.token);
+          localStorage.setItem("token", res.token);
+          window.location.href = "/first-time-setting-preferences";
+        }
+      });
   };
 
   const goToDashboard = () => {
@@ -76,6 +106,15 @@ export default function ModalSuccess({ title, message, show, goTo }) {
                 onClick={() => {
                   show(false);
                 }}
+              >
+                Aceptar
+              </button>
+            )}
+            {goTo === "dashboard" && (
+              <button
+                type="button"
+                className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 sm:ml-3 sm:w-auto sm:text-sm"
+                onClick={goToDashboard}
               >
                 Aceptar
               </button>
