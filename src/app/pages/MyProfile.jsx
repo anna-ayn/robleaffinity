@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import "../App.css";
+import { FaPen } from "react-icons/fa";
+import { MdVerified } from "react-icons/md";
 
 function MyProfile() {
   const [userData, setUserData] = useState(null);
@@ -22,6 +24,30 @@ function MyProfile() {
     });
   }, []);
 
+  const editDescription = () => {
+    const newDescription = prompt("Escribe tu nueva descripcion");
+    if (newDescription) {
+      fetch("http://localhost:3001/api/editDescription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ descripcion: newDescription }),
+      }).then((res) => {
+        if (res.error) {
+          alert(res.error);
+        } else {
+          setUserData({ ...userData, descripcion: newDescription });
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    console.log("Updated userData:", userData);
+  }, [userData]);
+
   const logOut = () => {
     localStorage.removeItem("token");
     window.location.href = "/";
@@ -34,29 +60,108 @@ function MyProfile() {
           <h1>
             Bienvenido, {userData.nombre} {userData.apellido}!
           </h1>
+          <div className="galeria-fotos flex justify-center">
+            {userData.fotos.map((foto, index) => (
+              <img
+                key={index}
+                src={`data:image/jpg;base64,${foto}`}
+                className="w-[30%]"
+              />
+            ))}
+            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+              +
+            </button>
+          </div>
           <p>Tu edad es {userData.edad}</p>
           <p>
             Tu ubicacion es {userData.ciudad}, {userData.pais}
           </p>
           <p>Tu sexo es {userData.sexo}</p>
-          <p>Tu descripcion es {userData.descripcion}</p>
-          {userData.verificado ? (
-            <p>Tu cuenta esta verificado</p>
-          ) : (
-            <p>Tu cuenta no esta verificado</p>
-          )}
-          <p>Tus hobbies son: {userData.hobbies}</p>
-          <p>Tus certificaciones son: {userData.certificaciones}</p>
-          <p>Tus habilidades son: {userData.habilidades}</p>
-          <p>Tus orientaciones sexuales son: {userData.orientaciones}</p>
-          <p>Tu(s) foto(s) de perfil son:</p>
-          {userData.fotos.map((foto, index) => (
-            <img
-              key={index}
-              src={`data:image/jpg;base64,${foto}`}
-              className="w-[20%] m-auto"
+          <div className="flex flex-row justify-center">
+            <p>Tu descripcion es {userData.descripcion}</p>{" "}
+            <FaPen
+              className="ml-2 text-[#13206a] cursor-pointer"
+              onClick={editDescription}
             />
+          </div>
+          {userData.verificado ? (
+            <div>
+              <MdVerified className="text-black" />
+              <p>Tu cuenta esta verificado</p>
+            </div>
+          ) : (
+            <div className="flex flex-row justify-center">
+              <p>Tu cuenta no esta verificado</p>
+              <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+                Verificar
+              </button>
+            </div>
+          )}
+          <div className="flex flex-row justify-center">
+            <p>Tus hobbies son: {userData.hobbies}</p>
+            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+              +
+            </button>
+          </div>
+          <div className="flex flex-row justify-center">
+            <p>Tus certificaciones son: {userData.certificaciones}</p>
+            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+              +
+            </button>
+          </div>
+          <div className="flex flex-row justify-center">
+            <p>Tus habilidades son: {userData.habilidades}</p>
+            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+              +
+            </button>
+          </div>
+          <div className="flex flex-row justify-center">
+            <p>Tus orientaciones sexuales son: {userData.orientaciones}</p>
+            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+              +
+            </button>
+          </div>
+          <p>Tus estudios son:</p>
+          {userData.lista_instituciones.map((institucion, index) => (
+            <div key={index}>
+              <p>Estudiaste en {institucion.nombre}</p>
+              {userData.lista_estudios[index].map((estudio, index) => (
+                <div key={index}>
+                  <p>
+                    Titulo: {estudio.r_grado} de {estudio.r_especialidad}
+                  </p>
+                  <p>Desde {estudio.r_ano_ingreso}</p>
+                  <p>Hasta {estudio.r_ano_egreso}</p>
+                </div>
+              ))}
+              <div className="flex flex-row justify-center">
+                <p>Estuviste en las siguientes agrupaciones:</p>
+                {userData.lista_agrupaciones[index].map((agrupacion, index) => (
+                  <div key={index}>
+                    <p>{agrupacion.r_agrupacion}</p>
+                  </div>
+                ))}
+                <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+                  +
+                </button>
+              </div>
+            </div>
           ))}
+          <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+            Agregar institucion
+          </button>
+          <p>Tus trabajos actuales son:</p>
+          {userData.lista_trabajos.map((trabajo, index) => (
+            <div key={index}>
+              <p>Trabajas en {userData.lista_empresas[index].nombreEmpresa}</p>
+              <p>Desde {trabajo.fecha_de_inicio}</p>
+              <p>Como {trabajo.puesto}</p>
+              <p>URL: {userData.lista_empresas[index].urlEmpresa}</p>
+            </div>
+          ))}
+          <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+            Agregar un trabajo actual
+          </button>
         </div>
       ) : (
         <p>Loading user data...</p>
