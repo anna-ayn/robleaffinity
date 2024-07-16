@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "../App.css";
 
-function Profile() {
+function MyProfile() {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -35,14 +35,21 @@ function Profile() {
             Bienvenido, {userData.nombre} {userData.apellido}!
           </h1>
           <p>Tu correo es {userData.email}</p>
-          <p>Tu número de teléfono es {userData.telefono}</p>
-          <p>Tu fecha de nacimiento es {userData.fecha_nacimiento}</p>
-          <p>Tu idioma de la app es {userData.idioma}</p>
+          <p>Tu edad es {userData.edad}</p>
           <p>
-            Tus notificaciones están {userData.notificaciones ? "ON" : "OFF"}
+            Tu ubicacion es {userData.ciudad}, {userData.pais}
           </p>
-          <p>Tu tema de la app es {userData.tema ? "Claro" : "Oscuro"}</p>
           <p>Tu sexo es {userData.sexo}</p>
+          <p>Tu descripcion es {userData.descripcion}</p>
+          {userData.verificado ? (
+            <p>Tu cuenta esta verificado</p>
+          ) : (
+            <p>Tu cuenta no esta verificado</p>
+          )}
+          <p>Tus hobbies son: {userData.hobbies}</p>
+          <p>Tus certificaciones son: {userData.certificaciones}</p>
+          <p>Tus habilidades son: {userData.habilidades}</p>
+          <p>Tus orientaciones sexuales son: {userData.orientaciones}</p>
           <p>Tu(s) foto(s) de perfil son:</p>
           {userData.fotos.map((foto, index) => (
             <img
@@ -65,4 +72,4 @@ function Profile() {
   );
 }
 
-export default Profile;
+export default MyProfile;

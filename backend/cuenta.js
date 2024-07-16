@@ -142,33 +142,66 @@ export async function getData(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     const userId = jwt.decode(token);
 
-    const query = "SELECT * FROM cuenta WHERE id_cuenta = $1";
+    const query = "SELECT * FROM get_all_public_info_about_user($1)";
     const data = await client.query(query, [userId.id_cuenta]);
 
-    const query2 = "SELECT * FROM perfil WHERE id_cuenta = $1";
-    const data2 = await client.query(query2, [userId.id_cuenta]);
+    const dominio_instituciones = data.rows[0].r_instituciones;
+    const id_empresas = data.rows[0].r_empresas;
 
-    const query3 =
-      "SELECT encode(foto, 'base64') FROM tiene_foto WHERE id_cuenta = $1";
-    const fotosRows = await client.query(query3, [userId.id_cuenta]);
+    let estudio_en_instituciones = [];
+    let agrupaciones = [];
+    for (const dominio of dominio_instituciones) {
+      const query2 = "SELECT * FROM get_user_estudio_en($1, $2)";
+      const data2 = await client.query(query2, [userId.id_cuenta, dominio]);
 
-    // solamente el nombre, apellido, fecha de nacimiento, email, telefono, idioma, notificaciones, tema
-    // sexo, descripcion, latitud, longitud y fotos
+      estudio_en_instituciones.push(data2.rows);
+
+      const query3 =
+        "SELECT * FROM get_user_agrupaciones_in_a_institution($1, $2)";
+      const data3 = await client.query(query3, [userId.id_cuenta, dominio]);
+
+      agrupaciones.push(data3.rows);
+    }
+
+    let trabaja_en_empresas = [];
+    for (const id_empresa of id_empresas) {
+      const query4 =
+        "SELECT * FROM get_all_info_about_a_user_trabaja_en($1, $2)";
+      const data4 = await client.query(query4, [userId.id_cuenta, id_empresa]);
+
+      trabaja_en_empresas.push(data4.rows);
+    }
+
+    const url =
+      "https://nominatim.openstreetmap.org/reverse?format=json&lat=" +
+      data.rows[0].r_latitud +
+      "&lon=" +
+      data.rows[0].r_longitud;
+
+    // fetch api
+    const response = await fetch(url);
+    const address = await response.json();
+
     const userData = {
-      nombre: data.rows[0].nombre,
-      apellido: data.rows[0].apellido,
-      fecha_nacimiento: data.rows[0].fecha_nacimiento,
-      email: data.rows[0].email,
-      telefono: data.rows[0].telefono,
-      idioma: data.rows[0].idioma,
-      notificaciones: data.rows[0].notificaciones,
-      tema: data.rows[0].tema,
-      sexo: data2.rows[0].sexo,
-      descripcion: data2.rows[0].descripcion,
-      latitud: data2.rows[0].latitud,
-      longitud: data2.rows[0].longitud,
-      fotos: fotosRows.rows.map((row) => row.encode),
+      nombre: data.rows[0].r_nombre,
+      apellido: data.rows[0].r_apellido,
+      edad: data.rows[0].r_edad,
+      sexo: data.rows[0].r_sexo,
+      descripcion: data.rows[0].r_descripcion,
+      verificado: data.rows[0].r_verificado,
+      ciudad: address.address.city,
+      pais: address.address.country,
+      hobbies: data.rows[0].r_hobbies,
+      certificaciones: data.rows[0].r_certificaciones,
+      habilidades: data.rows[0].r_habilidades,
+      orientaciones: data.rows[0].r_orientacion_sexual,
+      fotos: data.rows[0].r_fotos,
+      lista_trabajos: trabaja_en_empresas,
+      lista_estudios: estudio_en_instituciones,
+      lista_agrupaciones: agrupaciones,
     };
+
+    console.log(userData);
 
     // Envía los datos del usuario como respuesta
     res.json(userData);
