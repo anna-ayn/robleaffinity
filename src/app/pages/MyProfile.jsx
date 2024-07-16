@@ -34,7 +34,6 @@ function MyProfile() {
           <h1>
             Bienvenido, {userData.nombre} {userData.apellido}!
           </h1>
-          <p>Tu correo es {userData.email}</p>
           <p>Tu edad es {userData.edad}</p>
           <p>
             Tu ubicacion es {userData.ciudad}, {userData.pais}
