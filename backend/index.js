@@ -7,6 +7,9 @@ import { getInstituciones } from "./instituciones.js";
 import { getPreferences, insertPreferences } from "./preferencias.js";
 import { editDescription, verifiedUser } from "./perfil.js";
 import { updateHobbies } from "./hobbies.js";
+import { updateHabilidades } from "./habilidades.js";
+import { addPhoto } from "./fotos.js";
+import { deletePhoto } from "./fotos.js";
 
 const app = express();
 const port = 3001;
@@ -33,7 +36,9 @@ app.post("/api/insertPreferences", insertPreferences);
 app.post("/api/editDescription", editDescription);
 app.post("/api/verificarUsuario", verifiedUser);
 app.post("/api/hobbies", updateHobbies);
-
+app.post("/api/habilidades", updateHabilidades);
+app.post("/api/addPhoto", upload.none(), addPhoto);
+app.post("/api/deletePhoto", deletePhoto);
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
 });

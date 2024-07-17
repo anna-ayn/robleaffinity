@@ -3,8 +3,8 @@ import { useState } from "react";
 import MultiSelect from "../components/MultiSelect";
 import PropTypes from "prop-types";
 
-export default function AskPreferences({ saved_hobbies }) {
-  AskPreferences.propTypes = {
+export default function Hobbies({ saved_hobbies }) {
+  Hobbies.propTypes = {
     saved_hobbies: PropTypes.array.isRequired,
   };
 

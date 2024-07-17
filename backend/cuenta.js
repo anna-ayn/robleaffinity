@@ -4,7 +4,6 @@ import { ExpressAuth } from "@auth/express";
 import express from "express";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { list } from "postcss";
 
 const app = express();
 
@@ -38,8 +37,6 @@ export async function createAccount(req, res) {
     anio_inicio,
     anio_fin,
   } = req.body;
-
-  console.log(req.body);
 
   try {
     const salt = await bcrypt.genSalt(saltRounds);
@@ -194,6 +191,9 @@ export async function getData(req, res) {
     const response = await fetch(url);
     const address = await response.json();
 
+    const queryfotos = "SELECT * FROM get_photos_user($1)";
+    const datafotos = await client.query(queryfotos, [userId.id_cuenta]);
+
     const userData = {
       nombre: data.rows[0].r_nombre,
       apellido: data.rows[0].r_apellido,
@@ -205,9 +205,11 @@ export async function getData(req, res) {
       pais: address.address.country,
       hobbies: data.rows[0].r_hobbies.replace(/[{}]/g, "").split(","),
       certificaciones: data.rows[0].r_certificaciones,
-      habilidades: data.rows[0].r_habilidades,
-      orientaciones: data.rows[0].r_orientacion_sexual,
-      fotos: data.rows[0].r_fotos,
+      habilidades: data.rows[0].r_habilidades.replace(/[{}]/g, "").split(","),
+      orientaciones: data.rows[0].r_orientacion_sexual
+        .replace(/[{}]/g, "")
+        .split(","),
+      fotos: datafotos.rows,
       lista_empresas: nombres_empresas,
       lista_trabajos: trabaja_en_empresas,
       lista_instituciones: nombres_instituciones,
@@ -215,11 +217,16 @@ export async function getData(req, res) {
       lista_agrupaciones: agrupaciones,
     };
 
-    console.log(userData.hobbies);
-
-    // postgresql devuelve los hobbies con mas de 1 palabra con doble comilla
+    // postgresql devuelve los elementos en los arreglos con mas de 1 palabra con doble comilla
     // se eliminan las comillas dobles
     userData.hobbies = userData.hobbies.map((hobby) => hobby.replace(/"/g, ""));
+
+    userData.habilidades = userData.habilidades.map((habilidad) =>
+      habilidad.replace(/"/g, "")
+    );
+    userData.orientaciones = userData.orientaciones.map((orientacion) =>
+      orientacion.replace(/"/g, "")
+    );
 
     // Envía los datos del usuario como respuesta
     res.json(userData);
