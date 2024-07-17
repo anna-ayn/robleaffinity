@@ -26,6 +26,28 @@ export async function editDescription(req, res) {
     await client.query(query, [userId.id_cuenta, descripcion]);
 
     console.log("Description updated");
+    res.json({ message: "Description updated" });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  } finally {
+    await client.end();
+  }
+}
+
+export async function verifiedUser(req, res) {
+  const client = getClient();
+
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const userId = jwt.decode(token);
+
+    const query =
+      "SELECT update_info_perfil(p_id_cuenta := $1, p_verificado := TRUE)";
+    await client.query(query, [userId.id_cuenta]);
+
+    console.log("User verified");
+    res.json({ message: "User verified" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });

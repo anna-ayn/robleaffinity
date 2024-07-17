@@ -5,7 +5,7 @@ import multer from "multer";
 import { createAccount, login, getData } from "./cuenta.js";
 import { getInstituciones } from "./instituciones.js";
 import { getPreferences, insertPreferences } from "./preferencias.js";
-import { editDescription } from "./perfil.js";
+import { editDescription, verifiedUser } from "./perfil.js";
 
 const app = express();
 const port = 3001;
@@ -30,6 +30,7 @@ app.get("/api/getData", getData);
 app.get("/api/getPreferences", getPreferences);
 app.post("/api/insertPreferences", insertPreferences);
 app.post("/api/editDescription", editDescription);
+app.post("/api/verificarUsuario", verifiedUser);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

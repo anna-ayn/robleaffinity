@@ -34,19 +34,41 @@ function MyProfile() {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({ descripcion: newDescription }),
-      }).then((res) => {
-        if (res.error) {
-          alert(res.error);
-        } else {
-          setUserData({ ...userData, descripcion: newDescription });
-        }
-      });
+      })
+        .then((res) => {
+          if (res.error) {
+            alert(res.error);
+          } else {
+            console.log("HEYYYYYYYYYYYYYYYYYY");
+            window.location.href = "/myProfile";
+          }
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     }
   };
 
-  useEffect(() => {
-    console.log("Updated userData:", userData);
-  }, [userData]);
+  const verificarUsuario = () => {
+    fetch("http://localhost:3001/api/verificarUsuario", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((res) => {
+        if (res.error) {
+          alert(res.error);
+        } else {
+          console.log("HEYYYYYYYYYYYYYYYYYY");
+          window.location.href = "/myProfile";
+        }
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   const logOut = () => {
     localStorage.removeItem("token");
@@ -92,7 +114,10 @@ function MyProfile() {
           ) : (
             <div className="flex flex-row justify-center">
               <p>Tu cuenta no esta verificado</p>
-              <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+              <button
+                className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded"
+                onChange={verificarUsuario}
+              >
                 Verificar
               </button>
             </div>
