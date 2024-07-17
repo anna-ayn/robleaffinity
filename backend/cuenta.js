@@ -203,7 +203,7 @@ export async function getData(req, res) {
       verificado: data.rows[0].r_verificado,
       ciudad: address.address.city,
       pais: address.address.country,
-      hobbies: data.rows[0].r_hobbies,
+      hobbies: data.rows[0].r_hobbies.replace(/[{}]/g, "").split(","),
       certificaciones: data.rows[0].r_certificaciones,
       habilidades: data.rows[0].r_habilidades,
       orientaciones: data.rows[0].r_orientacion_sexual,
@@ -214,6 +214,12 @@ export async function getData(req, res) {
       lista_estudios: estudio_en_instituciones,
       lista_agrupaciones: agrupaciones,
     };
+
+    console.log(userData.hobbies);
+
+    // postgresql devuelve los hobbies con mas de 1 palabra con doble comilla
+    // se eliminan las comillas dobles
+    userData.hobbies = userData.hobbies.map((hobby) => hobby.replace(/"/g, ""));
 
     // Envía los datos del usuario como respuesta
     res.json(userData);

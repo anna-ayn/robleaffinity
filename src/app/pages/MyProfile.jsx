@@ -3,6 +3,8 @@ import "../App.css";
 import { FaPen } from "react-icons/fa";
 import { MdVerified } from "react-icons/md";
 import Sidebar from "../components/Sidebar";
+import Hobbies from "../components/Hobbies";
+import CarouselImgs from "../components/CarouselImgs";
 
 function MyProfile() {
   const [userData, setUserData] = useState(null);
@@ -40,7 +42,6 @@ function MyProfile() {
           if (res.error) {
             alert(res.error);
           } else {
-            console.log("HEYYYYYYYYYYYYYYYYYY");
             window.location.href = "/myProfile";
           }
         })
@@ -51,6 +52,7 @@ function MyProfile() {
   };
 
   const verificarUsuario = () => {
+    console.log("verificando...");
     fetch("http://localhost:3001/api/verificarUsuario", {
       method: "POST",
       headers: {
@@ -62,7 +64,6 @@ function MyProfile() {
         if (res.error) {
           alert(res.error);
         } else {
-          console.log("HEYYYYYYYYYYYYYYYYYY");
           window.location.href = "/myProfile";
         }
       })
@@ -71,65 +72,57 @@ function MyProfile() {
       });
   };
 
-  const logOut = () => {
-    localStorage.removeItem("token");
-    window.location.href = "/";
-  };
-
   return (
     <>
       <Sidebar />
       {userData ? (
-        <div>
-          <h1>
-            Bienvenido, {userData.nombre} {userData.apellido}!
-          </h1>
-          <div className="galeria-fotos flex justify-center">
-            {userData.fotos.map((foto, index) => (
-              <img
-                key={index}
-                src={`data:image/jpg;base64,${foto}`}
-                className="w-[30%]"
-              />
-            ))}
-            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
-              +
-            </button>
-          </div>
-          <p>Tu edad es {userData.edad}</p>
-          <p>
-            Tu ubicacion es {userData.ciudad}, {userData.pais}
-          </p>
-          <p>Tu sexo es {userData.sexo}</p>
-          <div className="flex flex-row justify-center">
-            <p>Tu descripcion es {userData.descripcion}</p>{" "}
-            <FaPen
-              className="ml-2 text-[#13206a] cursor-pointer"
-              onClick={editDescription}
-            />
-          </div>
-          {userData.verificado ? (
-            <div>
-              <MdVerified className="text-black" />
-              <p>Tu cuenta esta verificado</p>
-            </div>
-          ) : (
-            <div className="flex flex-row justify-center">
-              <p>Tu cuenta no esta verificado</p>
-              <button
-                className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded"
-                onChange={verificarUsuario}
-              >
-                Verificar
+        <div className="bg-[#996ff242] backdrop-blur-xl shadow-xl  sm:ml-64 p-10">
+          <div className="flex flex-col sm:flex-row">
+            <div className="flex w-1/3 h-full">
+              <CarouselImgs imgs={userData.fotos} base64={true} />
+              <button className="bg-[#13206a] h-8 hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+                +
               </button>
             </div>
-          )}
-          <div className="flex flex-row justify-center">
-            <p>Tus hobbies son: {userData.hobbies}</p>
-            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
-              +
-            </button>
+            <div className="w-2/3 mb-5">
+              <div className="flex flex-row items-center justify-center">
+                <p>
+                  {userData.nombre} {userData.apellido}
+                </p>
+                <div className="flex items-center">
+                  {userData.verificado ? (
+                    <MdVerified className="text-black ml-2" />
+                  ) : (
+                    <button
+                      className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded text-sm"
+                      onClick={verificarUsuario}
+                    >
+                      Verificar
+                    </button>
+                  )}
+                </div>
+              </div>
+              <div className="flex flex-col">
+                <p>Edad: {userData.edad}</p>
+                <p>
+                  Sexo: {userData.sexo === "F" && <span> Femenino </span>}{" "}
+                  {userData.sexo === "M" && <span> Masculino </span>}
+                </p>
+                <p>
+                  En {userData.ciudad}, {userData.pais}
+                </p>
+              </div>
+              <div className="flex flex-row">
+                <p>Descripción:</p>
+                <FaPen
+                  className="ml-2 text-[#13206a] cursor-pointer"
+                  onClick={editDescription}
+                />
+              </div>
+              <p className="text-sm text-left">{userData.descripcion}</p>
+            </div>
           </div>
+          <Hobbies saved_hobbies={userData.hobbies} />
           <div className="flex flex-row justify-center">
             <p>Tus certificaciones son: {userData.certificaciones}</p>
             <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">

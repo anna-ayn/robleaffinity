@@ -160,7 +160,12 @@ function AskPreferences({ firstTime }) {
                 Preferencia de género
               </label>
 
-              <MultiSelect options={genreOptions} name="genre" fun={setSexo} />
+              <MultiSelect
+                options={genreOptions}
+                name="genre"
+                fun={setSexo}
+                saved={sexo}
+              />
             </div>
             <div className="mb-[15px] flex-grow">
               <label
@@ -173,6 +178,7 @@ function AskPreferences({ firstTime }) {
                 options={orientationOptions}
                 name="orientation"
                 fun={setOrientacion}
+                saved={orientacion}
               />
             </div>
           </div>
