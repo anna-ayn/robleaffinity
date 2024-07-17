@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import "../App.css";
 import { FaPen } from "react-icons/fa";
 import { MdVerified } from "react-icons/md";
+import Sidebar from "../components/Sidebar";
 
 function MyProfile() {
   const [userData, setUserData] = useState(null);
@@ -77,6 +78,7 @@ function MyProfile() {
 
   return (
     <>
+      <Sidebar />
       {userData ? (
         <div>
           <h1>
@@ -191,12 +193,6 @@ function MyProfile() {
       ) : (
         <p>Loading user data...</p>
       )}
-      <button
-        onClick={logOut}
-        className="bg-[#de5466] hover:bg-[#e02841] text-white font-bold py-2 px-4 rounded"
-      >
-        Salir
-      </button>
     </>
   );
 }
