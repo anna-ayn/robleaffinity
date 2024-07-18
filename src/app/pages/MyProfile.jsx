@@ -7,6 +7,7 @@ import Sidebar from "../components/Sidebar";
 import Hobbies from "../components/Hobbies";
 import CarouselImgs from "../components/CarouselImgs";
 import Habilidades from "../components/Habilidades";
+import Orientations from "../components/Orientaciones";
 
 function MyProfile() {
   const [userData, setUserData] = useState(null);
@@ -14,6 +15,38 @@ function MyProfile() {
   const [base64Img, setBase64Img] = useState("");
   const [actualIndexPhoto, setActualIndexPhoto] = useState(0);
   const [showBotonAceptar, setShowBotonAceptar] = useState(false);
+  const [agregarTitulo, setAgregarTitulo] = useState(false);
+  const [agregarInstitucion, setAgregarInstitucion] = useState(false);
+  const [grado, setGrado] = useState("Maestria");
+  const [especialidad, setEspecialidad] = useState("");
+  const [dominio, setDominio] = useState("");
+  const [anio_inicio, setAnioInicio] = useState("");
+  const [anio_fin, setAnioFin] = useState("");
+  const [listaInstituciones, setListaInstituciones] = useState([]);
+
+  function getInstituciones() {
+    fetch("http://localhost:3001/api/instituciones", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+        }
+      })
+      .then((data) => {
+        setListaInstituciones(data);
+      })
+      .catch((error) => {
+        alert("Error 500 al obtener las instituciones: ", error);
+      });
+  }
 
   useEffect(() => {
     fetch("http://localhost:3001/api/getData", {
@@ -125,15 +158,23 @@ function MyProfile() {
         },
         body: JSON.stringify({ descripcion: newDescription }),
       })
-        .then((res) => {
-          if (res.error) {
-            alert(res.error);
-          } else {
+        .then((response) => {
+          if (response.ok) {
             window.location.href = "/myProfile";
+            return response.text();
+          } else {
+            response.text().then((text) => {
+              alert(Error(text));
+            });
+            alert(
+              response.text().then((text) => {
+                throw new Error(text);
+              })
+            );
           }
         })
         .catch((error) => {
-          console.error("Error:", error);
+          alert("Error 500 al editar descripcion: ", error);
         });
     }
   };
@@ -147,15 +188,222 @@ function MyProfile() {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
-      .then((res) => {
-        if (res.error) {
-          alert(res.error);
-        } else {
+      .then((response) => {
+        if (response.ok) {
           window.location.href = "/myProfile";
+          return response.text();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+          alert(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
         }
       })
       .catch((error) => {
-        console.error("Error:", error);
+        alert("Error 500 al verificar cuenta: ", error);
+      });
+  };
+
+  const addCertificacion = () => {
+    const certificacion = prompt("Escribe tu nueva certificacion");
+    if (certificacion) {
+      fetch("http://localhost:3001/api/addCertificacion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ certificado: certificacion }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            window.location.href = "/myProfile";
+            return response.text();
+          } else {
+            response.text().then((text) => {
+              alert(Error(text));
+            });
+            alert(
+              response.text().then((text) => {
+                throw new Error(text);
+              })
+            );
+          }
+        })
+        .catch((error) => {
+          alert("Error 500 al agregar certificacion: ", error);
+        });
+    }
+  };
+
+  const deleteCertificado = (index) => {
+    const JsonData = {
+      r_certificacion: userData.certificaciones[index],
+    };
+    fetch("http://localhost:3001/api/deleteCertificado", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(JsonData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.href = "/myProfile";
+          return response.text();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+          alert(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        alert("Error 500 al eliminar certificado: ", error);
+      });
+  };
+
+  const addAgrupacion = (dominio) => {
+    const agrupacion = prompt("Escribe la agrupacion");
+    if (agrupacion) {
+      fetch("http://localhost:3001/api/addAgrupacion", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ dominio: dominio, agrupacion: agrupacion }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            window.location.href = "/myProfile";
+            return response.text();
+          } else {
+            response.text().then((text) => {
+              alert(Error(text));
+            });
+            alert(
+              response.text().then((text) => {
+                throw new Error(text);
+              })
+            );
+          }
+        })
+        .catch((error) => {
+          alert("Error 500 al agregar agrupacion: ", error);
+        });
+    }
+  };
+
+  const deleteAgrupacion = (dominio, agrupacion) => {
+    const JsonData = {
+      dominio: dominio,
+      agrupacion: agrupacion,
+    };
+    fetch("http://localhost:3001/api/deleteAgrupacion", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(JsonData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.href = "/myProfile";
+          return response.text();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+          alert(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        alert("Error 500 al eliminar agrupacion: ", error);
+      });
+  };
+
+  const addTitulo = () => {
+    const JsonData = {
+      dominio: dominio,
+      grado: grado,
+      especialidad: especialidad,
+      anio_ingreso: anio_inicio,
+      anio_egreso: anio_fin,
+    };
+    fetch("http://localhost:3001/api/addTitulo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(JsonData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.href = "/myProfile";
+          return response.text();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+          alert(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        alert("Error 500 al agregar titulo: ", error);
+      });
+  };
+
+  const deleteTitulo = (institucion, grado, especialidad) => {
+    const JsonData = {
+      dominio: institucion,
+      grado: grado,
+      especialidad: especialidad,
+    };
+    fetch("http://localhost:3001/api/deleteTitulo", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(JsonData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.href = "/myProfile";
+          return response.text();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+          alert(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        alert("Error 500 al eliminar titulo: ", error);
       });
   };
 
@@ -179,7 +427,7 @@ function MyProfile() {
                   +
                 </button>
                 <FaTrashCan
-                  className="ml-2 text-[#ffffff] cursor-pointer bg-[#13206a] text-2xl mt-2"
+                  className="ml-2 text-[#ffffff] cursor-pointer bg-[#13206a] text-3xl mt-2 p-1"
                   onClick={() => {
                     console.log("Eliminando foto...", actualIndexPhoto);
                     handlePhotoDelete();
@@ -210,6 +458,7 @@ function MyProfile() {
                 <p>
                   Sexo: {userData.sexo === "F" && <span> Femenino </span>}{" "}
                   {userData.sexo === "M" && <span> Masculino </span>}
+                  {userData.sexo === "Otro" && <span> Otro </span>}
                 </p>
                 <p>
                   En {userData.ciudad}, {userData.pais}
@@ -225,61 +474,144 @@ function MyProfile() {
               <p className="text-sm text-left">{userData.descripcion}</p>
             </div>
           </div>
-          <Hobbies saved_hobbies={userData.hobbies} />
-          <Habilidades saved_habilidades={userData.habilidades} />
-          <div className="flex flex-row justify-center">
-            <p>Tus certificaciones son: {userData.certificaciones}</p>
-            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
-              +
-            </button>
-          </div>
-          <div className="flex flex-row justify-center">
-            <p>Tus orientaciones sexuales son: {userData.orientaciones}</p>
-            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
-              +
-            </button>
-          </div>
-          <p>Tus estudios son:</p>
-          {userData.lista_instituciones.map((institucion, index) => (
-            <div key={index}>
-              <p>Estudiaste en {institucion.nombre}</p>
-              {userData.lista_estudios[index].map((estudio, index) => (
-                <div key={index}>
-                  <p>
-                    Titulo: {estudio.r_grado} de {estudio.r_especialidad}
-                  </p>
-                  <p>Desde {estudio.r_ano_ingreso}</p>
-                  <p>Hasta {estudio.r_ano_egreso}</p>
-                </div>
-              ))}
+          <Hobbies saved_hobbies={userData.hobbies} className="mb-10" />
+          <Habilidades
+            saved_habilidades={userData.habilidades}
+            className="mb-10"
+          />
+          <div className="flex flex-row">
+            <div className="w-[300px] mr-10">
+              <Orientations saved_orientations={userData.orientaciones} />
+            </div>
+            <div className="flex flex-col my-5 w-1/2 flex-1/2">
               <div className="flex flex-row justify-center">
-                <p>Estuviste en las siguientes agrupaciones:</p>
-                {userData.lista_agrupaciones[index].map((agrupacion, index) => (
-                  <div key={index}>
-                    <p>{agrupacion.r_agrupacion}</p>
-                  </div>
-                ))}
-                <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+                <p>Certificaciones:</p>{" "}
+                <button
+                  className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded w-10"
+                  onClick={addCertificacion}
+                >
                   +
                 </button>
               </div>
+              {userData.certificaciones.map((certificacion, index) => (
+                <div key={index} className="flex flex-row justify-between">
+                  <p>{certificacion}</p>{" "}
+                  <FaTrashCan
+                    className="ml-2 text-[#ffffff] cursor-pointer bg-[#13206a] text-2xl mt-1 p-1"
+                    onClick={() => {
+                      console.log("Eliminando certificado...");
+                      deleteCertificado(index);
+                    }}
+                  />
+                </div>
+              ))}
             </div>
-          ))}
-          <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
-            Agregar institucion
-          </button>
-          <p>Tus trabajos actuales son:</p>
-          {userData.lista_trabajos.map((trabajo, index) => (
-            <div key={index}>
-              <p>Trabajas en {userData.lista_empresas[index].nombreEmpresa}</p>
-              <p>Desde {trabajo.fecha_de_inicio}</p>
-              <p>Como {trabajo.puesto}</p>
-              <p>URL: {userData.lista_empresas[index].urlEmpresa}</p>
+          </div>
+          <div className="mb-5">
+            <div className="flex flex-row justify-center">
+              <p>Estudios: </p>{" "}
+              <button
+                className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded"
+                onClick={() => {
+                  getInstituciones();
+                  setAgregarInstitucion(true);
+                }}
+              >
+                +
+              </button>
             </div>
-          ))}
-          <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
-            Agregar un trabajo actual
-          </button>
+            {userData.lista_instituciones.map((institucion, index) => (
+              <div key={index} className="flex flex-col justify-center">
+                <div className="flex flex-row justify-center">
+                  <p>Institución: {institucion.nombre}</p>{" "}
+                  <button
+                    className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded"
+                    onClick={() => {
+                      setAgregarTitulo(true);
+                      setDominio(institucion.dominio);
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+                <div className="">
+                  {userData.lista_estudios[index].map((estudio, index) => (
+                    <div key={index} className="flex flex-col justify-center">
+                      <div className="flex flex-row justify-center">
+                        <p>
+                          Titulo: {estudio.r_grado} de {estudio.r_especialidad}
+                        </p>{" "}
+                        <FaTrashCan
+                          className="ml-2 text-[#ffffff] cursor-pointer bg-[#13206a] text-2xl p-1"
+                          onClick={() => {
+                            console.log("Eliminando titulo...");
+                            deleteTitulo(
+                              institucion.dominio,
+                              estudio.r_grado,
+                              estudio.r_especialidad
+                            );
+                          }}
+                        />
+                      </div>
+                      <p>
+                        Desde {estudio.r_ano_ingreso} hasta{" "}
+                        {estudio.r_ano_egreso}
+                      </p>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex flex-col justify-center mb-3">
+                  <div className="flex flex-row justify-center mt-1">
+                    <p>Agrupaciones:</p>{" "}
+                    <button
+                      className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded"
+                      onClick={() => {
+                        addAgrupacion(institucion.dominio);
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+                  {userData.lista_agrupaciones[index].map(
+                    (agrupacion, index) => (
+                      <div
+                        key={index}
+                        className="flex flex-row justify-between w-[300px] self-center"
+                      >
+                        <p>{agrupacion.r_agrupacion}</p>
+                        <FaTrashCan
+                          className="ml-2 text-[#ffffff] cursor-pointer bg-[#13206a] text-2xl mt-1 p-1"
+                          onClick={() => {
+                            console.log("Eliminando agrupacion...");
+                            deleteAgrupacion(
+                              institucion.dominio,
+                              agrupacion.r_agrupacion
+                            );
+                          }}
+                        />
+                      </div>
+                    )
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+          <div>
+            <p>Tus trabajos actuales son:</p>{" "}
+            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
+              +
+            </button>
+            {userData.lista_trabajos.map((trabajo, index) => (
+              <div key={index}>
+                <p>
+                  Trabajas en {userData.lista_empresas[index].nombreEmpresa}
+                </p>
+                <p>Desde {trabajo.fecha_de_inicio}</p>
+                <p>Como {trabajo.puesto}</p>
+                <p>URL: {userData.lista_empresas[index].urlEmpresa}</p>
+              </div>
+            ))}
+          </div>
         </div>
       ) : (
         <p>Loading user data...</p>
@@ -324,6 +656,152 @@ function MyProfile() {
                   Aceptar
                 </button>
               )}
+            </div>
+          </div>
+        </div>
+      )}
+      {(agregarTitulo || agregarInstitucion) && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="flex flex-col bg-[#a2d2ec] bg-opacity-80 p-10 w-[600px] rounded-lg">
+            <div className="flex flex-col">
+              {agregarInstitucion && (
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    htmlFor="institution"
+                  >
+                    Institución
+                  </label>
+                  <select
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="institution"
+                    onChange={async (e) => {
+                      await setDominio(
+                        listaInstituciones.find(
+                          (institucion) =>
+                            institucion.dominio === e.target.value
+                        ).dominio
+                      );
+                    }}
+                    value={dominio}
+                    required
+                  >
+                    <option value="" disabled>
+                      Seleccione una institución
+                    </option>
+                    {listaInstituciones.map((institucion, index) => (
+                      <option key={index} value={institucion.dominio}>
+                        {institucion.nombre + " - " + institucion.dominio}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-black text-sm font-bold mb-2 text-left"
+                  htmlFor="grade"
+                >
+                  Grado
+                </label>
+                <select
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                  id="grade"
+                  onChange={(e) => setGrado(e.target.value)}
+                  value={grado}
+                  required
+                >
+                  <option value="Maestria">Maestría</option>
+                  <option value="Master">Master</option>
+                  <option value="Especializacion">Especialización</option>
+                  <option value="Diplomado">Diplomado</option>
+                  <option value="Doctorado">Doctorado</option>
+                  <option value="Otro">Otro</option>
+                </select>
+              </div>
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-black text-sm font-bold mb-2 text-left"
+                  htmlFor="title"
+                >
+                  Especialidad
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                  id="title"
+                  type="text"
+                  placeholder="Especialidad"
+                  onChange={(e) => setEspecialidad(e.target.value)}
+                  value={especialidad}
+                  required
+                />
+              </div>
+              <div className="flex flex-col md:flex-row justify-between">
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-black text-sm font-bold mb-2 text-left"
+                    htmlFor="start"
+                  >
+                    Año de ingreso
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                    id="start"
+                    type="number"
+                    placeholder="Año de inicio"
+                    onChange={(e) => setAnioInicio(e.target.value)}
+                    value={anio_inicio}
+                    min="1950"
+                    max={new Date().getFullYear()}
+                    required
+                  />
+                </div>
+                <div className="w-[1rem]"></div>
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-black text-sm font-bold mb-2 text-left"
+                    htmlFor="end"
+                  >
+                    Año de egreso
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                    id="end"
+                    type="number"
+                    placeholder="Año de fin"
+                    onChange={(e) => setAnioFin(e.target.value)}
+                    value={anio_fin}
+                    min="1950"
+                    max={new Date().getFullYear()}
+                    required
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-between mt-2">
+              <button
+                className="text-black border-2 border-black py-1 px-1 rounded-lg"
+                onClick={() => {
+                  setAgregarTitulo(false);
+                  setGrado("Maestria");
+                  setEspecialidad("");
+                  setAnioInicio("");
+                  setAnioFin("");
+                  setAgregarInstitucion(false);
+                }}
+              >
+                Cancelar
+              </button>
+              {especialidad !== "" &&
+                (anio_fin !== "") & (anio_inicio !== "") && (
+                  <button
+                    className="text-black border-2 border-black py-1 px-1 rounded-lg"
+                    onClick={addTitulo}
+                  >
+                    Aceptar
+                  </button>
+                )}
             </div>
           </div>
         </div>

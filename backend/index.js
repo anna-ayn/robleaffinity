@@ -10,6 +10,12 @@ import { updateHobbies } from "./hobbies.js";
 import { updateHabilidades } from "./habilidades.js";
 import { addPhoto } from "./fotos.js";
 import { deletePhoto } from "./fotos.js";
+import { updateOrientaciones } from "./orientaciones.js";
+import { addCertificacion } from "./certificaciones.js";
+import { deleteCertificacion } from "./certificaciones.js";
+import { addAgrupacion } from "./agrupaciones.js";
+import { deleteAgrupacion } from "./agrupaciones.js";
+import { addTitulo, deleteTitulo } from "./titulos.js";
 
 const app = express();
 const port = 3001;
@@ -25,7 +31,12 @@ app.use(
 app.use(express.json());
 app.use(bodyParser.json());
 
-const upload = multer();
+const upload = multer({
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5 MB
+    fieldSize: 5 * 1024 * 1024, // 5 MB
+  },
+});
 
 app.get("/api/instituciones", getInstituciones);
 app.post("/api/cuentas", upload.none(), createAccount);
@@ -39,6 +50,14 @@ app.post("/api/hobbies", updateHobbies);
 app.post("/api/habilidades", updateHabilidades);
 app.post("/api/addPhoto", upload.none(), addPhoto);
 app.post("/api/deletePhoto", deletePhoto);
+app.post("/api/Orientaciones", updateOrientaciones);
+app.post("/api/addCertificacion", addCertificacion);
+app.post("/api/deleteCertificado", deleteCertificacion);
+app.post("/api/addAgrupacion", addAgrupacion);
+app.post("/api/deleteAgrupacion", deleteAgrupacion);
+app.post("/api/addTitulo", addTitulo);
+app.post("/api/deleteTitulo", deleteTitulo);
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
 });
