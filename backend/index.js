@@ -16,6 +16,7 @@ import { deleteCertificacion } from "./certificaciones.js";
 import { addAgrupacion } from "./agrupaciones.js";
 import { deleteAgrupacion } from "./agrupaciones.js";
 import { addTitulo, deleteTitulo } from "./titulos.js";
+import { addTrabajaEn, deleteTrabajaEn } from "./trabaja_en.js";
 
 const app = express();
 const port = 3001;
@@ -57,6 +58,8 @@ app.post("/api/addAgrupacion", addAgrupacion);
 app.post("/api/deleteAgrupacion", deleteAgrupacion);
 app.post("/api/addTitulo", addTitulo);
 app.post("/api/deleteTitulo", deleteTitulo);
+app.post("/api/addEmpresa", addTrabajaEn);
+app.post("/api/deleteEmpresa", deleteTrabajaEn);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

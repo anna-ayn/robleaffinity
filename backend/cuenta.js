@@ -173,11 +173,15 @@ export async function getData(req, res) {
         "SELECT * FROM get_all_info_about_a_user_trabaja_en($1, $2)";
       const data4 = await client.query(query4, [userId.id_cuenta, id_empresa]);
 
-      trabaja_en_empresas.push(data4.rows);
+      let fecha = new Date(data4.rows[0].fecha_de_inicio);
+      data4.rows[0].fecha_de_inicio = fecha.toLocaleDateString();
+
+      trabaja_en_empresas.push(data4.rows[0]);
 
       const query5 = "SELECT * FROM get_all_info_about_a_empresa($1)";
-      const data5 = await client.query(query5, [id_empresa]);
+      let data5 = await client.query(query5, [id_empresa]);
 
+      data5.rows[0].idempresa = id_empresa;
       nombres_empresas.push(data5.rows[0]);
     }
 
@@ -228,7 +232,7 @@ export async function getData(req, res) {
       orientacion.replace(/"/g, "")
     );
 
-    console.log(userData);
+    console.log(userData.lista_empresas);
 
     // Envía los datos del usuario como respuesta
     res.json(userData);

@@ -8,6 +8,7 @@ import Hobbies from "../components/Hobbies";
 import CarouselImgs from "../components/CarouselImgs";
 import Habilidades from "../components/Habilidades";
 import Orientations from "../components/Orientaciones";
+import validator from "validator";
 
 function MyProfile() {
   const [userData, setUserData] = useState(null);
@@ -23,6 +24,11 @@ function MyProfile() {
   const [anio_inicio, setAnioInicio] = useState("");
   const [anio_fin, setAnioFin] = useState("");
   const [listaInstituciones, setListaInstituciones] = useState([]);
+  const [agregarTrabajo, setAgregarTrabajo] = useState(false);
+  const [empresa, setEmpresa] = useState("");
+  const [puesto, setPuesto] = useState("");
+  const [fecha_inicio_trabajo, setFechaInicio] = useState("");
+  const [urlEmpresa, setUrl] = useState("");
 
   function getInstituciones() {
     fetch("http://localhost:3001/api/instituciones", {
@@ -407,6 +413,73 @@ function MyProfile() {
       });
   };
 
+  const addEmpresa = () => {
+    const JsonData = {
+      empresa: empresa,
+      puesto: puesto,
+      fecha_inicio: fecha_inicio_trabajo,
+      url: urlEmpresa,
+    };
+    fetch("http://localhost:3001/api/addEmpresa", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(JsonData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.href = "/myProfile";
+          return response.text();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+          alert(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        alert("Error 500 al agregar empresa: ", error);
+      });
+  };
+
+  const deleteEmpresa = (index) => {
+    const JsonData = {
+      id_empresa: index,
+    };
+    fetch("http://localhost:3001/api/deleteEmpresa", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(JsonData),
+    })
+      .then((response) => {
+        if (response.ok) {
+          window.location.href = "/myProfile";
+          return response.text();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+          alert(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        alert("Error 500 al eliminar empresa: ", error);
+      });
+  };
+
   return (
     <>
       <Sidebar />
@@ -442,7 +515,7 @@ function MyProfile() {
                 </p>
                 <div className="flex items-center">
                   {userData.verificado ? (
-                    <MdVerified className="text-black ml-2" />
+                    <MdVerified className="text-white ml-2" />
                   ) : (
                     <button
                       className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded text-sm"
@@ -464,14 +537,16 @@ function MyProfile() {
                   En {userData.ciudad}, {userData.pais}
                 </p>
               </div>
-              <div className="flex flex-row">
-                <p>Descripción:</p>
-                <FaPen
-                  className="ml-2 text-[#13206a] cursor-pointer"
-                  onClick={editDescription}
-                />
+              <div className="flex flex-col ml-10">
+                <div className="flex flex-row">
+                  <p>Descripción:</p>
+                  <FaPen
+                    className="ml-2 text-[#13206a] cursor-pointer"
+                    onClick={editDescription}
+                  />
+                </div>
+                <p className="text-sm text-left">{userData.descripcion}</p>
               </div>
-              <p className="text-sm text-left">{userData.descripcion}</p>
             </div>
           </div>
           <Hobbies saved_hobbies={userData.hobbies} className="mb-10" />
@@ -560,7 +635,7 @@ function MyProfile() {
                     </div>
                   ))}
                 </div>
-                <div className="flex flex-col justify-center mb-3">
+                <div className="flex flex-col justify-center mb-5">
                   <div className="flex flex-row justify-center mt-1">
                     <p>Agrupaciones:</p>{" "}
                     <button
@@ -596,19 +671,36 @@ function MyProfile() {
               </div>
             ))}
           </div>
-          <div>
-            <p>Tus trabajos actuales son:</p>{" "}
-            <button className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded">
-              +
-            </button>
-            {userData.lista_trabajos.map((trabajo, index) => (
-              <div key={index}>
+          <div className="mt-10">
+            <div className="flex flex-row justify-center mb-2">
+              <p>Trabajos actuales: </p>{" "}
+              <button
+                className="bg-[#13206a] hover:bg-[#3a60ac] text-white font-bold ml-2 px-2 rounded"
+                onClick={() => {
+                  console.log("Agregando trabajo...");
+                  setAgregarTrabajo(true);
+                }}
+              >
+                +
+              </button>
+            </div>
+            {userData.lista_empresas.map((empresa, index) => (
+              <div key={index} className="mb-5">
+                <div className="flex flex-row justify-center ">
+                  <p>Empresa: {empresa.nombreempresa}</p>
+                  <FaTrashCan
+                    className="ml-2 text-[#ffffff] cursor-pointer bg-[#13206a] text-2xl p-1"
+                    onClick={() => {
+                      console.log("Eliminando trabajo...", empresa.idempresa);
+                      deleteEmpresa(empresa.idempresa);
+                    }}
+                  />
+                </div>
                 <p>
-                  Trabajas en {userData.lista_empresas[index].nombreEmpresa}
+                  Desde {userData.lista_trabajos[index].fecha_de_inicio},
+                  trabaja como {userData.lista_trabajos[index].puesto}.
                 </p>
-                <p>Desde {trabajo.fecha_de_inicio}</p>
-                <p>Como {trabajo.puesto}</p>
-                <p>URL: {userData.lista_empresas[index].urlEmpresa}</p>
+                <p>URL de la empresa: {empresa.urlempresa}</p>
               </div>
             ))}
           </div>
@@ -639,7 +731,7 @@ function MyProfile() {
             />
             <div className="flex justify-between mt-2">
               <button
-                className="text-black border-2 border-black py-1 px-1 rounded-lg"
+                className="text-white border-2 border-black py-1 px-1 rounded-lg"
                 onClick={() => {
                   setShowAddPhoto(false);
                   setBase64Img("");
@@ -650,7 +742,7 @@ function MyProfile() {
               </button>
               {showBotonAceptar && (
                 <button
-                  className="text-black border-2 border-black py-1 px-1 rounded-lg"
+                  className="text-white border-2 border-black py-1 px-1 rounded-lg"
                   onClick={handlePhotoAdd}
                 >
                   Aceptar
@@ -662,7 +754,7 @@ function MyProfile() {
       )}
       {(agregarTitulo || agregarInstitucion) && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex justify-center items-center">
-          <div className="flex flex-col bg-[#a2d2ec] bg-opacity-80 p-10 w-[600px] rounded-lg">
+          <div className="flex flex-col bg-[#6260cd bg-opacity-80 p-10 w-[600px] rounded-lg">
             <div className="flex flex-col">
               {agregarInstitucion && (
                 <div className="mb-[15px] flex-grow">
@@ -699,7 +791,7 @@ function MyProfile() {
               )}
               <div className="mb-[15px] flex-grow">
                 <label
-                  className="block text-black text-sm font-bold mb-2 text-left"
+                  className="block text-white text-sm font-bold mb-2 text-left"
                   htmlFor="grade"
                 >
                   Grado
@@ -721,7 +813,7 @@ function MyProfile() {
               </div>
               <div className="mb-[15px] flex-grow">
                 <label
-                  className="block text-black text-sm font-bold mb-2 text-left"
+                  className="block text-white text-sm font-bold mb-2 text-left"
                   htmlFor="title"
                 >
                   Especialidad
@@ -739,7 +831,7 @@ function MyProfile() {
               <div className="flex flex-col md:flex-row justify-between">
                 <div className="mb-[15px] flex-grow">
                   <label
-                    className="block text-black text-sm font-bold mb-2 text-left"
+                    className="block text-white text-sm font-bold mb-2 text-left"
                     htmlFor="start"
                   >
                     Año de ingreso
@@ -759,7 +851,7 @@ function MyProfile() {
                 <div className="w-[1rem]"></div>
                 <div className="mb-[15px] flex-grow">
                   <label
-                    className="block text-black text-sm font-bold mb-2 text-left"
+                    className="block text-white text-sm font-bold mb-2 text-left"
                     htmlFor="end"
                   >
                     Año de egreso
@@ -781,7 +873,7 @@ function MyProfile() {
 
             <div className="flex justify-between mt-2">
               <button
-                className="text-black border-2 border-black py-1 px-1 rounded-lg"
+                className="text-white border-2 border-black py-1 px-1 rounded-lg"
                 onClick={() => {
                   setAgregarTitulo(false);
                   setGrado("Maestria");
@@ -796,8 +888,108 @@ function MyProfile() {
               {especialidad !== "" &&
                 (anio_fin !== "") & (anio_inicio !== "") && (
                   <button
-                    className="text-black border-2 border-black py-1 px-1 rounded-lg"
+                    className="text-white border-2 border-black py-1 px-1 rounded-lg"
                     onClick={addTitulo}
+                  >
+                    Aceptar
+                  </button>
+                )}
+            </div>
+          </div>
+        </div>
+      )}
+      {agregarTrabajo && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 z-50 flex justify-center items-center">
+          <div className="flex flex-col bg-[#6260cd] bg-opacity-80 p-10 w-[600px] rounded-lg">
+            <div className="flex flex-col">
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-white text-sm font-bold mb-2 text-left"
+                  htmlFor="company"
+                >
+                  Empresa
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                  id="company"
+                  type="text"
+                  placeholder="Empresa"
+                  onChange={(e) => setEmpresa(e.target.value)}
+                  value={empresa}
+                  required
+                />
+              </div>
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-white text-sm font-bold mb-2 text-left"
+                  htmlFor="position"
+                >
+                  Puesto
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                  id="position"
+                  type="text"
+                  placeholder="Puesto"
+                  onChange={(e) => setPuesto(e.target.value)}
+                  value={puesto}
+                  required
+                />
+              </div>
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-white text-sm font-bold mb-2 text-left"
+                  htmlFor="start"
+                >
+                  Fecha de inicio
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                  id="start"
+                  type="date"
+                  placeholder="Fecha de inicio"
+                  onChange={(e) => setFechaInicio(e.target.value)}
+                  value={fecha_inicio_trabajo}
+                  required
+                />
+              </div>
+              <div className="mb-[15px] flex-grow">
+                <label
+                  className="block text-white text-sm font-bold mb-2 text-left"
+                  htmlFor="url"
+                >
+                  URL de la empresa
+                </label>
+                <input
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
+                  id="url"
+                  type="text"
+                  placeholder="URL de la empresa"
+                  onChange={(e) => setUrl(e.target.value)}
+                  value={urlEmpresa}
+                  required
+                />
+              </div>
+            </div>
+            <div className="flex justify-between mt-2">
+              <button
+                className="text-white border-2 border-black py-1 px-1 rounded-lg"
+                onClick={() => {
+                  setAgregarTrabajo(false);
+                  setEmpresa("");
+                  setPuesto("");
+                  setFechaInicio("");
+                  setUrl("");
+                }}
+              >
+                Cancelar
+              </button>
+              {empresa !== "" &&
+                (puesto !== "") & (fecha_inicio_trabajo !== "") &&
+                validator.isURL(urlEmpresa) && (
+                  <button
+                    className="text-white border-2 border-black py-1 px-1 rounded-lg"
+                    onClick={addEmpresa}
                   >
                     Aceptar
                   </button>
