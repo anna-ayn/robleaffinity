@@ -16,7 +16,7 @@ function App() {
         <Route path="/preferences" element={<AskPreferences />} />
         <Route
           path="/first-time-setting-preferences"
-          element={<AskPreferences firstTime={true} />}
+          element={<AskPreferences firstTime={true} inSettings={false} />}
         />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/MyProfile" element={<MyProfile />} />

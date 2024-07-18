@@ -232,6 +232,8 @@ export async function getData(req, res) {
       orientacion.replace(/"/g, "")
     );
 
+    console.log(userData.lista_empresas);
+
     // Envía los datos del usuario como respuesta
     res.json(userData);
   } catch (error) {

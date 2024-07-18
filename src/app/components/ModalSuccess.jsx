@@ -18,9 +18,7 @@ export default function ModalSuccess({
     password: PropTypes.string,
   };
 
-  const [modifyPreferences, setModifyPreferences] = useState(false);
-
-  const SignUpgoTo = () => {
+  const goToDashboard = () => {
     const data = {
       email: email,
       contrasena: password,
@@ -40,11 +38,32 @@ export default function ModalSuccess({
         } else {
           console.log(res.token);
           localStorage.setItem("token", res.token);
-          if (modifyPreferences) {
-            window.location.href = "/first-time-setting-preferences";
-          } else {
-            window.location.href = "/dashboard";
-          }
+          window.location.href = "/dashboard";
+        }
+      });
+  };
+
+  const ModifyPreferences = () => {
+    const data = {
+      email: email,
+      contrasena: password,
+    };
+
+    fetch("http://localhost:3001/api/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        if (res.error) {
+          alert(res.error);
+        } else {
+          console.log(res.token);
+          localStorage.setItem("token", res.token);
+          window.location.href = "/first-time-setting-preferences";
         }
       });
   };
@@ -89,8 +108,8 @@ export default function ModalSuccess({
                   type="button"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#de5466] text-base font-medium text-white hover:bg-[#e02841] focus:outline-none focus:ring-2 focus:ring-offset-2  sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => {
-                    setModifyPreferences(false);
-                    SignUpgoTo();
+                    show(false);
+                    goToDashboard();
                   }}
                 >
                   No
@@ -99,8 +118,8 @@ export default function ModalSuccess({
                   type="button"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
                   onClick={() => {
-                    setModifyPreferences(true);
-                    SignUpgoTo();
+                    show(false);
+                    ModifyPreferences();
                   }}
                 >
                   Si
