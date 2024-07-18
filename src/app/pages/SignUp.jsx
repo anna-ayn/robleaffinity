@@ -3,6 +3,7 @@ import logo from "../img/Logo.png";
 import { useState, useEffect } from "react";
 import ModalSuccess from "../components/ModalSuccess";
 import validator from "validator";
+import { set } from "mongoose";
 
 export default function SignUp() {
   const [listaInstituciones, setListaInstituciones] = useState([]);
@@ -26,6 +27,13 @@ export default function SignUp() {
   const [dominio_institucion, setDominioInstitucion] = useState(null);
   const [descripcion, setDescripcion] = useState("");
   const [mostrarModalSuccess, setmostrarModalSuccess] = useState(false);
+  const [nuevaInstitucion, setNuevaInstitucion] = useState({
+    dominio: "",
+    nombre: "",
+    tipo: "",
+    anio_fundacion: "",
+    direccion: "",
+  });
 
   function handleNextPage() {
     // verificar que los campos estén llenos
@@ -217,6 +225,10 @@ export default function SignUp() {
       });
   }
 
+  function handleOtraInstitucion(data) {
+    console.log("enviando correo con los datos...");
+  }
+
   return (
     <div className="flex flex-col items-center mx-auto w-full h-full font-medium text-white max-w-auto">
       <img
@@ -393,6 +405,10 @@ export default function SignUp() {
                   className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
                   id="institution"
                   onChange={async (e) => {
+                    if (e.target.value === "Otra") {
+                      setDominioInstitucion("Otra");
+                      return;
+                    }
                     await setDominioInstitucion(
                       listaInstituciones.find(
                         (institucion) => institucion.dominio === e.target.value
@@ -410,104 +426,257 @@ export default function SignUp() {
                       {institucion.nombre + " - " + institucion.dominio}
                     </option>
                   ))}
+                  <option key="Otra" value="Otra">
+                    Otra
+                  </option>
                 </select>
               </div>
-              <div className="mb-[15px] flex-grow">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                  htmlFor="grade"
-                >
-                  Grado
-                </label>
-                <select
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="grade"
-                  onChange={(e) => setGrado(e.target.value)}
-                  value={grado}
-                  required
-                >
-                  <option value="Maestria">Maestría</option>
-                  <option value="Master">Master</option>
-                  <option value="Especializacion">Especialización</option>
-                  <option value="Diplomado">Diplomado</option>
-                  <option value="Doctorado">Doctorado</option>
-                  <option value="Otro">Otro</option>
-                </select>
-              </div>
-              <div className="mb-[15px] flex-grow">
-                <label
-                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                  htmlFor="title"
-                >
-                  Especialidad
-                </label>
-                <input
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                  id="title"
-                  type="text"
-                  placeholder="Especialidad"
-                  onChange={(e) => setEspecialidad(e.target.value)}
-                  value={especialidad}
-                  required
-                />
-              </div>
-              <div className="flex flex-col md:flex-row justify-between">
+              {dominio_institucion === "Otra" && (
                 <div className="mb-[15px] flex-grow">
+                  <h3 className="font-bold text-gray-700">
+                    Proporciona los datos de la institución
+                  </h3>
+                  <div className="mb-5">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                      htmlFor="dominio_nuevo_institucion"
+                    >
+                      Dominio de la institución
+                    </label>
+                    <input
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="dominio_nuevo_institucion"
+                      type="text"
+                      placeholder="Dominio de la institución"
+                      onChange={(e) =>
+                        setNuevaInstitucion({
+                          ...nuevaInstitucion,
+                          dominio: e.target.value,
+                        })
+                      }
+                      value={nuevaInstitucion.dominio}
+                      required
+                    />
+                  </div>
+                  <div className="mb-5">
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                      htmlFor="nombre_nuevo_institucion"
+                    >
+                      Nombre de la institución
+                    </label>
+                    <input
+                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="nombre_nuevo_institucion"
+                      type="text"
+                      placeholder="Nombre de la institución"
+                      onChange={(e) =>
+                        setNuevaInstitucion({
+                          ...nuevaInstitucion,
+                          nombre: e.target.value,
+                        })
+                      }
+                      value={nuevaInstitucion.nombre}
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-row md:flex-row justify-between">
+                    <div className="mb-[15px] flex-grow">
+                      <label
+                        className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                        htmlFor="tipo_nueva_institucion"
+                      >
+                        Tipo de institución
+                      </label>
+                      <select
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="tipo_institucion"
+                        onChange={(e) =>
+                          setNuevaInstitucion({ tipo: e.target.value })
+                        }
+                        value={nuevaInstitucion.tipo}
+                        required
+                      >
+                        <option value="Politica">Política</option>
+                        <option value="Economica">Económica</option>
+                        <option value="Juridica">Jurídica</option>
+                        <option value="Laboral">Laboral</option>
+                        <option value="Cientifica">Científica</option>
+                        <option value="Universitaria">Universitaria</option>
+                        <option value="Artistica">Artística</option>
+                        <option value="Otro">Otro</option>
+                      </select>
+                    </div>
+                    <div className="w-[1rem]"></div>
+                    <div className="mb-[15px] flex-grow">
+                      <label
+                        className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                        htmlFor="anio_fundacion_nueva_institucion"
+                      >
+                        Año de fundación
+                      </label>
+                      <input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="anio_fundacion_nueva_institucion"
+                        type="number"
+                        placeholder="Año de fundación"
+                        onChange={(e) =>
+                          setNuevaInstitucion({
+                            anio_fundacion: e.target.value,
+                          })
+                        }
+                        value={nuevaInstitucion.anio_fundacion}
+                        required
+                      />
+                    </div>
+                  </div>
                   <label
                     className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                    htmlFor="start"
+                    htmlFor="direccion_nueva_institucion"
                   >
-                    Año de ingreso
+                    Dirección de la institución{" "}
                   </label>
                   <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="start"
-                    type="number"
-                    placeholder="Año de inicio"
-                    onChange={(e) => setAnioInicio(e.target.value)}
-                    value={anio_inicio}
-                    min="1950"
-                    max={new Date().getFullYear()}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 mb-5 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="direccion_nuevo_institucion"
+                    type="text"
+                    placeholder="Dirección"
+                    onChange={(e) =>
+                      setNuevaInstitucion({
+                        ...nuevaInstitucion,
+                        direccion: e.target.value,
+                      })
+                    }
+                    value={nuevaInstitucion.direccion}
                     required
                   />
+                  <div className="flex justify-between">
+                    <button
+                      className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                      type="button"
+                      onClick={handlePreviousPage}
+                    >
+                      Atrás
+                    </button>
+                    {nuevaInstitucion.dominio !== "" &&
+                      nuevaInstitucion.nombre !== "" &&
+                      nuevaInstitucion.tipo !== "" &&
+                      nuevaInstitucion.anio_fundacion !== "" &&
+                      nuevaInstitucion.direccion !== "" && (
+                        <button
+                          className="bg-[#ff8787] hover:bg-[#fab6b6] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                          type="button"
+                          onClick={() =>
+                            handleOtraInstitucion(nuevaInstitucion)
+                          }
+                        >
+                          Enviar solicitud
+                        </button>
+                      )}
+                  </div>
                 </div>
-                <div className="w-[1rem]"></div>
-                <div className="mb-[15px] flex-grow">
-                  <label
-                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                    htmlFor="end"
-                  >
-                    Año de egreso
-                  </label>
-                  <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="end"
-                    type="number"
-                    placeholder="Año de fin"
-                    onChange={(e) => setAnioFin(e.target.value)}
-                    value={anio_fin}
-                    min="1950"
-                    max={new Date().getFullYear()}
-                    required
-                  />
-                </div>
-              </div>
-              <div className="flex justify-between">
-                <button
-                  className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  type="button"
-                  onClick={handlePreviousPage}
-                >
-                  Atrás
-                </button>
-                <button
-                  className="bg-[#ff8787] hover:bg-[#fab6b6] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                  type="button"
-                  onClick={handleNextPage}
-                >
-                  Siguiente
-                </button>
-              </div>
+              )}
+              {dominio_institucion !== null &&
+                dominio_institucion !== "Otra" && (
+                  <div>
+                    <div className="mb-[15px] flex-grow">
+                      <label
+                        className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                        htmlFor="grade"
+                      >
+                        Grado
+                      </label>
+                      <select
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="grade"
+                        onChange={(e) => setGrado(e.target.value)}
+                        value={grado}
+                        required
+                      >
+                        <option value="Maestria">Maestría</option>
+                        <option value="Master">Master</option>
+                        <option value="Especializacion">Especialización</option>
+                        <option value="Diplomado">Diplomado</option>
+                        <option value="Doctorado">Doctorado</option>
+                        <option value="Otro">Otro</option>
+                      </select>
+                    </div>
+                    <div className="mb-[15px] flex-grow">
+                      <label
+                        className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                        htmlFor="title"
+                      >
+                        Especialidad
+                      </label>
+                      <input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="title"
+                        type="text"
+                        placeholder="Especialidad"
+                        onChange={(e) => setEspecialidad(e.target.value)}
+                        value={especialidad}
+                        required
+                      />
+                    </div>
+                    <div className="flex flex-col md:flex-row justify-between">
+                      <div className="mb-[15px] flex-grow">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                          htmlFor="start"
+                        >
+                          Año de ingreso
+                        </label>
+                        <input
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="start"
+                          type="number"
+                          placeholder="Año de inicio"
+                          onChange={(e) => setAnioInicio(e.target.value)}
+                          value={anio_inicio}
+                          min="1950"
+                          max={new Date().getFullYear()}
+                          required
+                        />
+                      </div>
+                      <div className="w-[1rem]"></div>
+                      <div className="mb-[15px] flex-grow">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                          htmlFor="end"
+                        >
+                          Año de egreso
+                        </label>
+                        <input
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="end"
+                          type="number"
+                          placeholder="Año de fin"
+                          onChange={(e) => setAnioFin(e.target.value)}
+                          value={anio_fin}
+                          min="1950"
+                          max={new Date().getFullYear()}
+                          required
+                        />
+                      </div>
+                    </div>
+                    <div className="flex justify-between">
+                      <button
+                        className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        type="button"
+                        onClick={handlePreviousPage}
+                      >
+                        Atrás
+                      </button>
+                      <button
+                        className="bg-[#ff8787] hover:bg-[#fab6b6] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        type="button"
+                        onClick={handleNextPage}
+                      >
+                        Siguiente
+                      </button>
+                    </div>
+                  </div>
+                )}
             </div>
           )}
           {currentPage === 3 && (

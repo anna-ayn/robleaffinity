@@ -164,7 +164,7 @@ function AskPreferences({ firstTime }) {
                 options={genreOptions}
                 name="genre"
                 fun={setSexo}
-                saved={sexo}
+                saved={[""]}
               />
             </div>
             <div className="mb-[15px] flex-grow">
@@ -178,7 +178,7 @@ function AskPreferences({ firstTime }) {
                 options={orientationOptions}
                 name="orientation"
                 fun={setOrientacion}
-                saved={orientacion}
+                saved={[""]}
               />
             </div>
           </div>
