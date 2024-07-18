@@ -332,7 +332,7 @@ export default function Settings() {
               Guardar
             </button>
           </div>
-          <AskPreferences firstTime={!userHasPreference} inSettings={true} />
+          <AskPreferences firstTime={!userHasPreference} />
         </div>
       </div>
     </div>
