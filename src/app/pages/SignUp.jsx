@@ -431,7 +431,11 @@ export default function SignUp() {
                 </select>
               </div>
               {dominio_institucion === "Otra" && (
-                <form action="https://getform.io/f/bvreygyb" method="POST">
+                <form
+                  action="https://formcarry.com/s/NYjeJ0KbB-b"
+                  method="POST"
+                  encType="multipart/form-data"
+                >
                   <div className="mb-[15px] flex-grow">
                     <h3 className="font-bold text-gray-700">
                       Proporciona los datos de la institución
