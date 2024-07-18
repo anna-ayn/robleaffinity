@@ -1,6 +1,6 @@
 import "../App.css";
 import PropTypes from "prop-types";
-
+import { useState } from "react";
 export default function ModalSuccess({
   title,
   message,
@@ -18,7 +18,9 @@ export default function ModalSuccess({
     password: PropTypes.string,
   };
 
-  const goToPreferences = () => {
+  const [modifyPreferences, setModifyPreferences] = useState(false);
+
+  const SignUpgoTo = () => {
     const data = {
       email: email,
       contrasena: password,
@@ -38,13 +40,13 @@ export default function ModalSuccess({
         } else {
           console.log(res.token);
           localStorage.setItem("token", res.token);
-          window.location.href = "/first-time-setting-preferences";
+          if (modifyPreferences) {
+            window.location.href = "/first-time-setting-preferences";
+          } else {
+            window.location.href = "/dashboard";
+          }
         }
       });
-  };
-
-  const goToDashboard = () => {
-    window.location.href = "/dashboard";
   };
 
   return (
@@ -86,14 +88,20 @@ export default function ModalSuccess({
                 <button
                   type="button"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-[#de5466] text-base font-medium text-white hover:bg-[#e02841] focus:outline-none focus:ring-2 focus:ring-offset-2  sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={goToDashboard}
+                  onClick={() => {
+                    setModifyPreferences(false);
+                    SignUpgoTo();
+                  }}
                 >
                   No
                 </button>
                 <button
                   type="button"
                   className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-green-600 text-base font-medium text-white hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={goToPreferences}
+                  onClick={() => {
+                    setModifyPreferences(true);
+                    SignUpgoTo();
+                  }}
                 >
                   Si
                 </button>
