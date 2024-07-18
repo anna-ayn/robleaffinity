@@ -63,7 +63,10 @@ function MyProfile({ id_usuario }) {
                   {userData.verificado ? (
                     <MdVerified className="text-white ml-2" />
                   ) : (
-                    <p>Perfil no verificado</p>
+                    <p className="ml-2 text-[#272525]">
+                      {" "}
+                      (Perfil no verificado)
+                    </p>
                   )}
                 </div>
               </div>
@@ -92,7 +95,7 @@ function MyProfile({ id_usuario }) {
             </div>
             {userData.hobbies.map((hobbie, index) => (
               <div key={index} className="flex flex-row justify-between">
-                <p>{hobbie}</p>{" "}
+                <li>{hobbie}</li>{" "}
               </div>
             ))}
           </div>
@@ -102,7 +105,7 @@ function MyProfile({ id_usuario }) {
             </div>
             {userData.habilidades.map((habilidad, index) => (
               <div key={index} className="flex flex-row justify-between">
-                <p>{habilidad}</p>{" "}
+                <li>{habilidad}</li>{" "}
               </div>
             ))}
           </div>
@@ -113,7 +116,7 @@ function MyProfile({ id_usuario }) {
               </div>
               {userData.orientaciones.map((orientaciones, index) => (
                 <div key={index} className="flex flex-row justify-between">
-                  <p>{orientaciones}</p>{" "}
+                  <li>{orientaciones}</li>{" "}
                 </div>
               ))}
             </div>
@@ -123,7 +126,7 @@ function MyProfile({ id_usuario }) {
               </div>
               {userData.certificaciones.map((certificacion, index) => (
                 <div key={index} className="flex flex-row justify-between">
-                  <p>{certificacion}</p>{" "}
+                  <li>{certificacion}</li>{" "}
                 </div>
               ))}
             </div>
