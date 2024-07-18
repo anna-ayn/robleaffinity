@@ -13,34 +13,32 @@ function MyProfile({ id_usuario }) {
   const [userData, setUserData] = useState(null);
   const [actualIndexPhoto, setActualIndexPhoto] = useState(0);
 
-  useEffect(() => {
-    fetch(`http://localhost:3001/api/getAnotherUserData`, {
+  const getAnotherUserData = (id_usuario) => {
+    fetch(`/api/getAnotherUserData?id_usuario=${id_usuario}`, {
       method: "GET",
       headers: {
         Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
     })
       .then((response) => {
         if (response.ok) {
-          response.json().then((data) => {
-            setUserData(data);
-          });
+          return response.json();
         } else {
           response.text().then((text) => {
             alert(Error(text));
           });
-          alert(
-            response.text().then((text) => {
-              throw new Error(text);
-            })
-          );
         }
       })
+      .then((data) => {
+        setUserData(data);
+      })
       .catch((error) => {
-        alert("Error 500 al obtener datos del perfil: ", error);
+        alert("Error 500 al obtener los datos del usuario: ", error);
       });
+  };
+
+  useEffect(() => {
+    getAnotherUserData(id_usuario);
   }, [id_usuario]);
 
   return (

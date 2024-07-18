@@ -2,7 +2,7 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import multer from "multer";
-import { createAccount, login, getData } from "./cuenta.js";
+import { createAccount, login, getData, getAnotherUserData } from "./cuenta.js";
 import { getInstituciones } from "./instituciones.js";
 import {
   getPreferences,
@@ -68,6 +68,9 @@ app.post("/api/updateSettings", updateSettings);
 app.post("/api/updateInfoCuenta", updateInfoCuenta);
 app.post("/api/checkIfUserHasPreferences", checkIfUserHasPreferences);
 app.post("/api/updatePreferences", updatePreferences);
+
+app.get("/api/getAnotherUserData", getAnotherUserData);
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
 });
