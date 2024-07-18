@@ -3,11 +3,11 @@ import { useEffect, useState } from "react";
 import MultiRangeSlider from "../components/multiRangeSlider/MultiRangeSlider";
 import MultiSelect from "../components/MultiSelect";
 import PropTypes from "prop-types";
+import validator from "validator";
 
-function AskPreferences({ firstTime, inSettings }) {
+function AskPreferences({ firstTime }) {
   AskPreferences.propTypes = {
     firstTime: PropTypes.bool,
-    inSettings: PropTypes.bool,
   };
 
   const [grado, setGrado] = useState("");
@@ -58,10 +58,10 @@ function AskPreferences({ firstTime, inSettings }) {
         setMaxEdad(data.maxEdad);
         setSexo(data.prefSexos);
         setOrientacion(data.prefOrientaciones);
-        setUserWithPassport(data.tiene_passport);
         setLatitudOrigen(data.latitud_origen);
         setLongitudOrigen(data.longitud_origen);
         setThereisdata(true);
+        setUserWithPassport(data.tiene_passport);
       });
   };
 
@@ -97,7 +97,6 @@ function AskPreferences({ firstTime, inSettings }) {
       })
         .then((response) => {
           if (response.ok) {
-            setSaved(true);
             alert("Preferencias guardadas con exito");
             // ir al dashboard
             window.location.href = "/dashboard";
@@ -118,6 +117,13 @@ function AskPreferences({ firstTime, inSettings }) {
           alert("Error 500 al guardar las preferencias: ", error);
         });
     } else {
+      if (
+        !validator.isLatLong(latitud_origen, longitud_origen) &&
+        userWithPassport
+      ) {
+        alert("Las coordenadas no son validas");
+        return;
+      }
       fetch("http://localhost:3001/api/updatePreferences", {
         method: "POST",
         headers: {
@@ -130,7 +136,6 @@ function AskPreferences({ firstTime, inSettings }) {
         .then((response) => {
           if (response.ok) {
             console.log("Preferencias guardadas con exito");
-            setSaved(true);
             alert("Preferencias guardadas con exito");
             return response.text();
           } else {
@@ -219,16 +224,57 @@ function AskPreferences({ firstTime, inSettings }) {
               >
                 Rango de edad
               </label>
-              <MultiRangeSlider
-                min={30}
-                max={99}
-                setMin={setMinEdad}
-                setMax={setMaxEdad}
-                actualMin={minEdad}
-                actualMax={maxEdad}
-              />
+              <div className="mb-[30px]">
+                <MultiRangeSlider
+                  min={30}
+                  max={99}
+                  setMin={setMinEdad}
+                  setMax={setMaxEdad}
+                  actualMin={minEdad}
+                  actualMax={maxEdad}
+                />
+              </div>
             </div>
-            <div className="mt-[30px] mb-[15px] flex-grow">
+            {userWithPassport && (
+              <div className="flex flex-col md:flex-row justify-between">
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-white text-sm font-bold mb-2 text-left"
+                    htmlFor="latitud"
+                  >
+                    Latitud de origen
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="latitud"
+                    type="text"
+                    placeholder="10.00000000"
+                    onChange={(e) => setLatitudOrigen(e.target.value)}
+                    value={latitud_origen}
+                    required
+                  />
+                </div>
+                <div className="w-[1rem]"></div>
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-white text-sm font-bold mb-2 text-left"
+                    htmlFor="longitud"
+                  >
+                    Longitud de origen
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="longitud"
+                    type="text"
+                    placeholder="-10.00000000"
+                    onChange={(e) => setLongitudOrigen(e.target.value)}
+                    value={longitud_origen}
+                    required
+                  />
+                </div>
+              </div>
+            )}
+            <div className="mb-[15px] flex-grow">
               <label
                 className="block text-white text-sm font-bold mb-2 text-left"
                 htmlFor="genre"
@@ -243,6 +289,7 @@ function AskPreferences({ firstTime, inSettings }) {
                 saved={sexo}
               />
             </div>
+
             <div className="mb-[15px] flex-grow">
               <label
                 className="block text-white text-sm font-bold mb-2 text-left"
