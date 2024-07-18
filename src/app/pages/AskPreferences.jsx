@@ -1,5 +1,5 @@
 import "../App.css";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import MultiRangeSlider from "../components/multiRangeSlider/MultiRangeSlider";
 import MultiSelect from "../components/MultiSelect";
 import PropTypes from "prop-types";
@@ -37,6 +37,32 @@ function AskPreferences({ firstTime }) {
     { value: "Buscando Chamba", label: "Buscando Chamba" },
     { value: "Otro", label: "Otro" },
   ];
+
+  const getPreferences = () => {
+    fetch("http://localhost:3001/api/getPreferences", {
+      method: "GET",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        setGrado(data.estudio);
+        setMaxDistancia(data.distancia_maxima);
+        setMinEdad(data.min_edad);
+        setMaxEdad(data.max_edad);
+        setSexo(data.arr_prefSexos);
+        setOrientacion(data.arr_prefOrientaciones);
+      });
+  };
+
+  useEffect(() => {
+    if (firstTime) {
+      getPreferences();
+    }
+  }, [firstTime]);
 
   const onSave = () => {
     if (firstTime) {

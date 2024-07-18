@@ -107,3 +107,26 @@ export async function insertPreferences(req, res) {
     await client.end();
   }
 }
+
+export async function checkIfUserHasPreferences(req, res) {
+  const client = getClient();
+
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const userId = jwt.decode(token);
+
+    const query = "SELECT * FROM preferencias WHERE id_cuenta = $1";
+    const result = await client.query(query, [userId.id_cuenta]);
+
+    if (result.rows.length === 0) {
+      res.json({ hasPreferences: false });
+    } else {
+      res.json({ hasPreferences: true });
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  } finally {
+    await client.end();
+  }
+}

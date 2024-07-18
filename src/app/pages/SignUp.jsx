@@ -3,7 +3,6 @@ import logo from "../img/Logo.png";
 import { useState, useEffect } from "react";
 import ModalSuccess from "../components/ModalSuccess";
 import validator from "validator";
-import { set } from "mongoose";
 
 export default function SignUp() {
   const [listaInstituciones, setListaInstituciones] = useState([]);
@@ -226,7 +225,7 @@ export default function SignUp() {
   }
 
   function handleOtraInstitucion(data) {
-    console.log("enviando correo con los datos...");
+    console.log("enviando correo con los datos...", data);
   }
 
   return (
@@ -695,8 +694,8 @@ export default function SignUp() {
                   value={theme}
                   required
                 >
-                  <option value="True">Claro</option>
-                  <option value="False">Oscuro</option>
+                  <option value="false">Claro</option>
+                  <option value="true">Oscuro</option>
                 </select>
               </div>
               <div className="mb-[15px] flex-grow">
@@ -731,8 +730,8 @@ export default function SignUp() {
                   value={notifications}
                   required
                 >
-                  <option value="True">Activadas</option>
-                  <option value="False">Desactivadas</option>
+                  <option value="true">Activadas</option>
+                  <option value="false">Desactivadas</option>
                 </select>
               </div>
               <div className="flex justify-between">
