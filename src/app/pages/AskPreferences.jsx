@@ -90,7 +90,7 @@ function AskPreferences({ firstTime, inSettings = false }) {
       latitud_origen: firstTime ? latitud_origen : null,
       longitud_origen: firstTime ? longitud_origen : null,
     };
-    if ((firstTime && !thereisdata) || !userHasPreference || !inSettings) {
+    if ((firstTime && !thereisdata && !userHasPreference) || !inSettings) {
       fetch("http://localhost:3001/api/insertPreferences", {
         method: "POST",
         headers: {
