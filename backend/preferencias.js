@@ -14,14 +14,14 @@ const maxRetries = 5;
 
 async function queryWithRetry(query, values, retries = 0) {
   const client = getClient();
-  
+
   try {
     const result = await client.query(query, values);
     return result;
   } catch (err) {
-    if (err.code === 'XX000' && retries < maxRetries) {
+    if (err.code === "XX000" && retries < maxRetries) {
       console.log(`Retrying query, attempt ${retries + 1}`);
-      await new Promise(res => setTimeout(res, (retries + 1) * 100)); // Exponential backoff
+      await new Promise((res) => setTimeout(res, (retries + 1) * 100)); // Exponential backoff
       return queryWithRetry(query, values, retries + 1);
     } else {
       throw err;
@@ -52,17 +52,19 @@ export async function getPreferences(req, res) {
       maxDistancia: preferencias?.rows[0]?.r_distancia_max ?? null,
       minEdad: preferencias?.rows[0]?.r_min_edad ?? null,
       maxEdad: preferencias?.rows[0]?.r_max_edad ?? null,
-      prefSexos: preferencias?.rows[0]?.r_pref_sexos 
-        ? preferencias.rows[0].r_pref_sexos.replace(/[{}]/g, "").split(",") 
+      prefSexos: preferencias?.rows[0]?.r_pref_sexos
+        ? preferencias.rows[0].r_pref_sexos.replace(/[{}]/g, "").split(",")
         : [],
-      prefOrientaciones: preferencias?.rows[0]?.r_pref_orientaciones_sexuales 
-        ? preferencias.rows[0].r_pref_orientaciones_sexuales.replace(/[{}]/g, "").split(",") 
+      prefOrientaciones: preferencias?.rows[0]?.r_pref_orientaciones_sexuales
+        ? preferencias.rows[0].r_pref_orientaciones_sexuales
+            .replace(/[{}]/g, "")
+            .split(",")
         : [],
-      tiene_passport: tiene_passport?.rows[0]?.check_if_user_has_a_permission ?? false,
+      tiene_passport:
+        tiene_passport?.rows[0]?.check_if_user_has_a_permission ?? false,
     };
-    
 
-    console.log(preferencesData)
+    console.log(preferencesData);
 
     preferencesData.prefSexos = preferencesData.prefSexos.map((prefSexo) =>
       prefSexo.replace(/"/g, "")
@@ -89,7 +91,7 @@ export async function insertPreferences(req, res) {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const userId = jwt.decode(token);
-    
+
     const {
       estudio,
       distancia_maxima,
@@ -145,11 +147,11 @@ export async function checkIfUserHasPreferences(req, res) {
   const token = req.headers.authorization.split(" ")[1];
 
   if (!token) {
-    return res.status(401).json({ message: 'Authorization token missing' });
+    return res.status(401).json({ message: "Authorization token missing" });
   }
 
   try {
-    const decoded = jwt.verify(token, 'your_secret_key'); // Reemplaza 'your_secret_key' con tu clave secreta real
+    const decoded = jwt.verify(token, "your_secret_key"); // Reemplaza 'your_secret_key' con tu clave secreta real
     const userId = decoded.id_cuenta;
 
     const query = "SELECT * FROM preferencias WHERE id_cuenta = $1";
@@ -161,10 +163,10 @@ export async function checkIfUserHasPreferences(req, res) {
       return res.json({ hasPreferences: true });
     }
   } catch (error) {
-    console.log('Error checking user preferences:', error);
+    console.log("Error checking user preferences:", error);
 
-    if (error.name === 'JsonWebTokenError') {
-      return res.status(401).json({ message: 'Invalid token' });
+    if (error.name === "JsonWebTokenError") {
+      return res.status(401).json({ message: "Invalid token" });
     }
 
     return res.status(500).json({ message: error.message });
@@ -177,7 +179,7 @@ export async function updatePreferences(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     const userId = jwt.decode(token);
 
-    const {
+    let {
       estudio,
       distancia_maxima,
       min_edad,
@@ -188,16 +190,9 @@ export async function updatePreferences(req, res) {
       longitud_origen,
     } = req.body;
 
-    console.log(
-      estudio,
-      distancia_maxima,
-      min_edad,
-      max_edad,
-      arr_prefSexos,
-      arr_prefOrientaciones,
-      latitud_origen,
-      longitud_origen,
-    )
+    if (estudio === "") {
+      estudio = null;
+    }
 
     if (latitud_origen && longitud_origen) {
       const query_passport = "SELECT check_if_user_has_a_permission($1, $2)";
