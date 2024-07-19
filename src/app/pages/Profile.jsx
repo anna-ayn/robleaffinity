@@ -43,9 +43,8 @@ function MyProfile({ id_usuario }) {
 
   return (
     <>
-      <Sidebar />
       {userData ? (
-        <div className="bg-[#996ff242] backdrop-blur-xl shadow-xl  sm:ml-64 p-10">
+        <div className="bg-[#996ff242] backdrop-blur-xl shadow-xl  sm:ml-[15rem] p-10 w-[1000px]">
           <div className="flex flex-col sm:flex-row">
             <div className="flex w-1/3 h-full">
               <CarouselImgs
