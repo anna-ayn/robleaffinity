@@ -1,5 +1,26 @@
 import { getClient } from './client.js';
 import jwt from 'jsonwebtoken';
+import PDFDocument from 'pdfkit';
+import path from "path"
+
+const maxRetries = 5;
+
+async function queryWithRetry(query, values = null, retries = 0) {
+  const client = getClient();
+
+  try {
+    const result = await client.query(query, values);
+    return result;
+  } catch (err) {
+    if (err.code === "XX000" && retries < maxRetries) {
+      console.log(`Retrying query, attempt ${retries + 1}`);
+      await new Promise((res) => setTimeout(res, (retries + 1) * 100)); // Exponential backoff
+      return queryWithRetry(query, values, retries + 1);
+    } else {
+      throw err;
+    }
+  }
+}
 
 export async function insertUserTarjeta(req, res) {
   const client = getClient();
@@ -100,55 +121,103 @@ export async function getDataPago(req, res) {
     }
   }
 
-export async function subscribeUserToTier(req, res) {
-  const client = getClient();
+  export async function subscribeUserToTier(req, res) {
+    const client = getClient();
+  
+    function getRandomNumber() {
+      const max = 2147483646
+      return Math.floor(Math.random() * max);
+    }
+  
+    /*function generateInvoice(data) {
+      const doc = new PDFDocument({ margin: 50 });
+      const invoicePath = path.join(__dirname, `invoice_${Date.now()}.pdf`);
+  
+      doc.pipe(fs.createWriteStream(invoicePath));
+  
+      doc
+        .fontSize(20)
+        .text('Factura', { align: 'center' });
+  
+      doc
+        .fontSize(12)
+        .text(`Fecha: ${new Date().toLocaleDateString()}`, { align: 'right' })
+        .moveDown();
+  
+      doc
+        .text(`Nombre del Tier: ${data.nombre_tier_usuario}`)
+        .text(`Plazo del Tier: ${data.plazo_tier}`)
+        .moveDown();
+  
+      doc
+        .text(`Dígitos de la Tarjeta: ${data.digitos_tarjeta_usario}`)
+        .text(`Estado del Pago: ${data.estado_pago}`)
+        .moveDown();
+  
+      doc
+        .text(`Monto del Pago: $${data.monto_pago}`)
+        .moveDown();
+  
+      doc
+        .text(`Número de Factura: ${data.numero_factura_actual}`)
+        .moveDown();
+  
+      doc.end();
+  
+      return invoicePath;
+    }*/
+  
+    try {
+      // Obtener los datos del cuerpo de la solicitud
+      const {
+        nombre_tier_usuario,
+        plazo_tier,
+        digitos_tarjeta_usario,
+        estado_pago,
+        monto_pago,
+      } = req.body;
+  
+      // Obtener el token de autorización del encabezado
+      const token = req.headers.authorization.split(" ")[1];
+      const dataDecoded = jwt.decode(token);
+      const id_cuenta_usuario = dataDecoded.id_cuenta;
+      const numero_factura_actual = getRandomNumber();
+  
+  
+  // Generar el documento de la factura
+  const byteaHex = Buffer.from('Hello World').toString('hex'); // Aquí tienes un ejemplo válido
+  
+  // Consultar la base de datos usando la función subscribe_user
+  const query = `
+    SELECT subscribe_user($1, $2, $3, $4, $5, $6, $7, decode($8, 'hex'))
+  `;
+  const values = [
+    id_cuenta_usuario,
+    nombre_tier_usuario,
+    plazo_tier,
+    digitos_tarjeta_usario,
+    numero_factura_actual,
+    estado_pago,
+    parseFloat(monto_pago).toFixed(2),
+    byteaHex,
+  ];
 
-  try {
-    // Obtener los datos del cuerpo de la solicitud
-    const {
-      nombre_tier_usuario,
-      plazo_tier,
-      digitos_tarjeta_usario,
-      numero_factura_actual,
-      estado_pago,
-      monto_pago,
-      documento_factura_usuario
-    } = req.body;
-
-    // Obtener el token de autorización del encabezado
-    const token = req.headers.authorization.split(" ")[1];
-    const dataDecoded = jwt.decode(token);
-    const id_cuenta_usuario = dataDecoded.id_cuenta;
-
-    // Consultar la base de datos usando la función subscribe_user
-    const query = `
-      SELECT subscribe_user($1, $2, $3, $4, $5, $6, $7, $8)
-    `;
-    const values = [
-      id_cuenta_usuario,
-      nombre_tier_usuario,
-      plazo_tier,
-      digitos_tarjeta_usario,
-      numero_factura_actual,
-      estado_pago,
-      monto_pago,
-      documento_factura_usuario
-    ];
-
-    await client.query(query, values);
-
-    // Responder al cliente que la suscripción fue exitosa
-    res.status(200).json({ message: 'Suscripción del usuario realizada correctamente' });
-  } catch (error) {
-    console.error('Error en subscribeUser:', error);
-
-    // Enviar una respuesta de error en caso de excepción
-    res.status(500).json({ message: error.message });
-  } finally {
-    // Asegurarse de cerrar la conexión con la base de datos
-    await client.end();
+  console.log(values)
+  
+  await client.query(query, values);
+  
+  // Responder al cliente que la suscripción fue exitosa
+  res.status(200).json({ message: 'Suscripción del usuario realizada correctamente' });
+} catch (error) {
+      console.error('Error en subscribeUser:', error);
+  
+      // Enviar una respuesta de error en caso de excepción
+      res.status(500).json({ message: error.message });
+    } finally {
+      // Asegurarse de cerrar la conexión con la base de datos
+      await client.end();
+    }
   }
-}
 
 export async function getDataOfCards(req, res) {
     const client = getClient();
@@ -164,7 +233,7 @@ export async function getDataOfCards(req, res) {
         const id_cuenta_usuario = dataDecoded.id_cuenta;
         const query = 'SELECT * FROM get_user_cards($1)';
         const values = [id_cuenta_usuario];
-        const result = await client.query(query, values);
+        const result = await queryWithRetry(query, values);
         const cards = result.rows;
         res.status(200).json(cards);
     } catch (error) {
@@ -210,4 +279,21 @@ export async function getPaymentsByAccount(req, res) {
     } finally {
         await client.end();
     }
+}
+
+export async function getTiers(req, res) {
+  const client = getClient();
+
+  try {
+    await client.connect();
+
+    const query = 'SELECT * FROM tier';
+    const result = await queryWithRetry(query, null);
+    res.status(200).json(result.rows);
+  } catch (error) {
+    console.error('Error en getTiers:', error);
+    res.status(500).json({ message: error.message });
+  } finally {
+    await client.end();
+  }
 }

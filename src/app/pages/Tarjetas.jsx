@@ -88,7 +88,7 @@ const CardTable = () => {
         }),
       });
 
-      const data = await fetch("http://localhost:3001/api/getDataOfCards", {
+      fetch("http://localhost:3001/api/getDataOfCards", {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
