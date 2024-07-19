@@ -63,7 +63,7 @@ export default function ModalSuccess({
         } else {
           console.log(res.token);
           localStorage.setItem("token", res.token);
-          window.location.href = "/first-time-setting-preferences";
+          window.location.href = "/settings";
         }
       });
   };
