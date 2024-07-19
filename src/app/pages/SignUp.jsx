@@ -173,6 +173,19 @@ export default function SignUp() {
 
   function handleSubmit() {
     const formData = new FormData();
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+        setLocation({ latitude, longitude });
+        console.log("Latitude is :", latitude);
+        console.log("Longitude is :", longitude);
+      },
+      (error) => {
+        console.error(error);
+        // Handle error if user denies permission or if there's an error retrieving the location
+      }
+    );
     formData.append("nombre", nombre);
     formData.append("apellido", apellido);
     formData.append("fecha_nacimiento", fechaNacimiento);
@@ -203,6 +216,7 @@ export default function SignUp() {
       body: formData,
     })
       .then((response) => {
+        console.log("a")
         if (response.ok) {
           console.log("Cuenta creada correctamente");
           setmostrarModalSuccess(true);
@@ -220,6 +234,7 @@ export default function SignUp() {
         }
       })
       .catch((error) => {
+        console.log("b")
         alert("Error 500 al crear la cuenta: ", error);
       });
   }

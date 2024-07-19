@@ -488,7 +488,7 @@ function MyProfile() {
           <div className="flex flex-col sm:flex-row">
             <div className="flex w-1/3 h-full">
               <CarouselImgs
-                imgs={Object.values(userData.fotos.map((foto) => foto.r_foto))}
+                imgs={Object.values(userData?.fotos?.map((foto) => foto.r_foto))}
                 base64={true}
                 setIdx={setActualIndexPhoto}
               />

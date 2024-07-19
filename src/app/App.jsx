@@ -21,7 +21,6 @@ function App() {
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/MyProfile" element={<MyProfile />} />
         <Route path="/settings" element={<Settings />} />
-
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </BrowserRouter>
