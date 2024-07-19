@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import MultiRangeSlider from "../components/multiRangeSlider/MultiRangeSlider";
 import MultiSelect from "../components/MultiSelect";
 import PropTypes from "prop-types";
-import ModalSuccess from "../components/ModalSuccess";
+import validator from "validator";
 
 function AskPreferences({ firstTime }) {
   AskPreferences.propTypes = {
@@ -16,7 +16,10 @@ function AskPreferences({ firstTime }) {
   const [maxEdad, setMaxEdad] = useState(99);
   const [sexo, setSexo] = useState([]);
   const [orientacion, setOrientacion] = useState([]);
-  const [saved, setSaved] = useState(false);
+  const [userWithPassport, setUserWithPassport] = useState(false);
+  const [latitud_origen, setLatitudOrigen] = useState(0);
+  const [longitud_origen, setLongitudOrigen] = useState(0);
+  const [thereisdata, setThereisdata] = useState(false);
 
   const genreOptions = [
     { value: "F", label: "Femenino" },
@@ -49,32 +52,42 @@ function AskPreferences({ firstTime }) {
     })
       .then((response) => response.json())
       .then((data) => {
-        setGrado(data.estudio);
-        setMaxDistancia(data.distancia_maxima);
-        setMinEdad(data.min_edad);
-        setMaxEdad(data.max_edad);
-        setSexo(data.arr_prefSexos);
-        setOrientacion(data.arr_prefOrientaciones);
-      });
+        setGrado(data.grado);
+        setMaxDistancia(data.maxDistancia);
+        setMinEdad(data.minEdad);
+        setMaxEdad(data.maxEdad);
+        setSexo(data.prefSexos);
+        setOrientacion(data.prefOrientaciones);
+        setLatitudOrigen(data.latitud_origen);
+        setLongitudOrigen(data.longitud_origen);
+        setThereisdata(true);
+        setUserWithPassport(data.tiene_passport);
+      }).catch(e => {
+        console.log(e)
+      })
   };
 
   useEffect(() => {
-    if (firstTime) {
+    if (!firstTime) {
       getPreferences();
+    } else {
+      setSexo([""]);
+      setOrientacion([""]);
     }
-  }, [firstTime]);
+  }, []);
 
   const onSave = () => {
+    const dataJSON = {
+      estudio: grado,
+      distancia_maxima: maxDistancia,
+      min_edad: minEdad,
+      max_edad: maxEdad,
+      arr_prefSexos: sexo,
+      arr_prefOrientaciones: orientacion,
+      latitud_origen: latitud_origen,
+      longitud_origen: longitud_origen,
+    };
     if (firstTime) {
-      const dataJSON = {
-        estudio: grado,
-        distancia_maxima: maxDistancia,
-        min_edad: minEdad,
-        max_edad: maxEdad,
-        arr_prefSexos: sexo,
-        arr_prefOrientaciones: orientacion,
-      };
-
       fetch("http://localhost:3001/api/insertPreferences", {
         method: "POST",
         headers: {
@@ -86,8 +99,46 @@ function AskPreferences({ firstTime }) {
       })
         .then((response) => {
           if (response.ok) {
+            alert("Preferencias guardadas con exito");
+            // ir al dashboard
+            window.location.href = "/dashboard";
+            return response.text();
+          } else {
+            response.text().then((text) => {
+              alert(Error(text));
+            });
+
+            console.log(
+              response.text().then((text) => {
+                throw new Error(text);
+              })
+            );
+          }
+        })
+        .catch((error) => {
+          alert("Error 500 al guardar las preferencias: ", error);
+        });
+    } else {
+      if (
+        !validator.isLatLong(latitud_origen, longitud_origen) &&
+        userWithPassport
+      ) {
+        alert("Las coordenadas no son validas");
+        return;
+      }
+      fetch("http://localhost:3001/api/updatePreferences", {
+        method: "POST",
+        headers: {
+          Accept: "./multipart/form-data",
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(dataJSON),
+      })
+        .then((response) => {
+          if (response.ok) {
             console.log("Preferencias guardadas con exito");
-            setSaved(true);
+            alert("Preferencias guardadas con exito");
             return response.text();
           } else {
             response.text().then((text) => {
@@ -107,6 +158,10 @@ function AskPreferences({ firstTime }) {
     }
   };
 
+  if (!thereisdata && !firstTime) {
+    return <div>Cargando preferencias...</div>;
+  }
+
   return (
     <div className="flex flex-col items-center mx-auto w-full font-medium text-white max-w-auto">
       <div className="p-2 h-full w-[350px]  bg-red-400 rounded-md bg-clip-padding backdrop-filter backdrop-blur-sm bg-opacity-20 border border-gray-100">
@@ -115,13 +170,13 @@ function AskPreferences({ firstTime }) {
           <div className="flex flex-col">
             <div className="mb-[15px] flex-grow">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                className="block text-white text-sm font-bold mb-2 text-left"
                 htmlFor="grade"
               >
                 Grado
               </label>
               <select
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                 id="grade"
                 onChange={(e) => setGrado(e.target.value)}
                 value={grado}
@@ -137,7 +192,7 @@ function AskPreferences({ firstTime }) {
             </div>
             <div className="mb-[15px] flex-grow">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                className="block text-white text-sm font-bold mb-2 text-left"
                 htmlFor="maxDistance"
               >
                 Máxima distancia
@@ -149,7 +204,7 @@ function AskPreferences({ firstTime }) {
                 onChange={(e) => setMaxDistancia(parseInt(e.target.value))}
                 min="1"
                 max="3000"
-                className="mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                className="mb-2 shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
               />
               <input
                 type="range"
@@ -166,21 +221,64 @@ function AskPreferences({ firstTime }) {
             </div>
             <div className="mb-[15px] flex-grow">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                className="block text-white text-sm font-bold mb-2 text-left"
                 htmlFor="minAge"
               >
                 Rango de edad
               </label>
-              <MultiRangeSlider
-                min={30}
-                max={99}
-                setMin={setMinEdad}
-                setMax={setMaxEdad}
-              />
+              <div className="mb-[30px]">
+                <MultiRangeSlider
+                  min={30}
+                  max={99}
+                  setMin={setMinEdad}
+                  setMax={setMaxEdad}
+                  actualMin={minEdad}
+                  actualMax={maxEdad}
+                />
+              </div>
             </div>
-            <div className="mt-[30px] mb-[15px] flex-grow">
+            {userWithPassport && (
+              <div className="flex flex-col md:flex-row justify-between">
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-white text-sm font-bold mb-2 text-left"
+                    htmlFor="latitud"
+                  >
+                    Latitud de origen
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="latitud"
+                    type="text"
+                    placeholder="10.00000000"
+                    onChange={(e) => setLatitudOrigen(e.target.value)}
+                    value={latitud_origen}
+                    required
+                  />
+                </div>
+                <div className="w-[1rem]"></div>
+                <div className="mb-[15px] flex-grow">
+                  <label
+                    className="block text-white text-sm font-bold mb-2 text-left"
+                    htmlFor="longitud"
+                  >
+                    Longitud de origen
+                  </label>
+                  <input
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    id="longitud"
+                    type="text"
+                    placeholder="-10.00000000"
+                    onChange={(e) => setLongitudOrigen(e.target.value)}
+                    value={longitud_origen}
+                    required
+                  />
+                </div>
+              </div>
+            )}
+            <div className="mb-[15px] flex-grow">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                className="block text-white text-sm font-bold mb-2 text-left"
                 htmlFor="genre"
               >
                 Preferencia de género
@@ -190,12 +288,13 @@ function AskPreferences({ firstTime }) {
                 options={genreOptions}
                 name="genre"
                 fun={setSexo}
-                saved={[""]}
+                saved={sexo}
               />
             </div>
+
             <div className="mb-[15px] flex-grow">
               <label
-                className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                className="block text-white text-sm font-bold mb-2 text-left"
                 htmlFor="orientation"
               >
                 Preferencia de orientación sexual
@@ -204,7 +303,7 @@ function AskPreferences({ firstTime }) {
                 options={orientationOptions}
                 name="orientation"
                 fun={setOrientacion}
-                saved={[""]}
+                saved={orientacion}
               />
             </div>
           </div>
@@ -218,14 +317,6 @@ function AskPreferences({ firstTime }) {
           </button>
         </form>
       </div>
-      {saved && (
-        <ModalSuccess
-          title="Preferencias guardadas con exito"
-          message=""
-          show={setSaved}
-          goTo="dashboard"
-        />
-      )}
     </div>
   );
 }

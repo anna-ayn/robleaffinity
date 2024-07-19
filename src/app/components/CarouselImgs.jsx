@@ -15,7 +15,7 @@ export default function CarouselImgs({ imgs, base64, setIdx }) {
   const [index, setIndex] = useState(0);
 
   return (
-    <div className="h-[300px]">
+    <div className="h-[300px] w-[80rem]">
       <Carousel
         className="rounded-xl"
         prevArrow={({ handlePrev }) => (

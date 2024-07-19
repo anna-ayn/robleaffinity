@@ -20,27 +20,39 @@ export async function getPreferences(req, res) {
     const query = "SELECT * FROM get_preferences($1)";
     const preferencias = await client.query(query, [userId.id_cuenta]);
 
-    console.log(preferencias.rows);
-
     const query2 = "SELECT check_if_user_has_a_permission($1, $2)";
     const tiene_passport = await client.query(query2, [
       userId.id_cuenta,
       "passport",
     ]);
 
-    console.log(tiene_passport.rows);
-
     const preferencesData = {
-      grado: preferencias.rows[0].r_estudio,
-      latidud_origen: preferencias.rows[0].r_latitud_origen,
-      longitud_origen: preferencias.rows[0].r_longitud_origen,
-      maxDistancia: preferencias.rows[0].r_distancia_max,
-      minEdad: preferencias.rows[0].r_min_edad,
-      maxEdad: preferencias.rows[0].r_max_edad,
-      prefSexos: preferencias.rows[0].r_pref_sexos,
-      prefOrientaciones: preferencias.rows[0].r_pref_orientaciones_sexuales,
-      tiene_passport: tiene_passport.rows[0].check_if_user_has_a_permission,
+      grado: preferencias?.rows[0]?.r_estudio ?? null,
+      latidud_origen: preferencias?.rows[0]?.r_latitud_origen ?? null,
+      longitud_origen: preferencias?.rows[0]?.r_longitud_origen ?? null,
+      maxDistancia: preferencias?.rows[0]?.r_distancia_max ?? null,
+      minEdad: preferencias?.rows[0]?.r_min_edad ?? null,
+      maxEdad: preferencias?.rows[0]?.r_max_edad ?? null,
+      prefSexos: preferencias?.rows[0]?.r_pref_sexos 
+        ? preferencias.rows[0].r_pref_sexos.replace(/[{}]/g, "").split(",") 
+        : [],
+      prefOrientaciones: preferencias?.rows[0]?.r_pref_orientaciones_sexuales 
+        ? preferencias.rows[0].r_pref_orientaciones_sexuales.replace(/[{}]/g, "").split(",") 
+        : [],
+      tiene_passport: tiene_passport?.rows[0]?.check_if_user_has_a_permission ?? false,
     };
+    
+
+    console.log(preferencesData)
+
+    preferencesData.prefSexos = preferencesData.prefSexos.map((prefSexo) =>
+      prefSexo.replace(/"/g, "")
+    );
+    preferencesData.prefOrientaciones = preferencesData.prefOrientaciones.map(
+      (prefOrientacion) => prefOrientacion.replace(/"/g, "")
+    );
+
+    console.log(preferencesData);
 
     // Envía los datos del usuario como respuesta
     res.json(preferencesData);
@@ -71,24 +83,22 @@ export async function insertPreferences(req, res) {
     if (estudio === "") {
       const query =
         "SELECT insert_preferences(p_id_cuenta := $1, p_distancia_maxima := $2, p_min_edad := $3, p_max_edad := $4)";
-      const result = await client.query(query, [
+      await client.query(query, [
         userId.id_cuenta,
         distancia_maxima,
         min_edad,
         max_edad,
       ]);
-      res.json(result.rows);
     } else {
       const query =
         "SELECT insert_preferences(p_id_cuenta := $1, p_estudio := $2, p_distancia_maxima := $3, p_min_edad := $4, p_max_edad := $5)";
-      const result = await client.query(query, [
+      await client.query(query, [
         userId.id_cuenta,
         estudio,
         distancia_maxima,
         min_edad,
         max_edad,
       ]);
-      res.json(result.rows);
     }
 
     for (let i = 0; i < arr_prefSexos.length; i++) {
@@ -100,6 +110,10 @@ export async function insertPreferences(req, res) {
       const query3 = "SELECT insert_pref_orientacion_sexual($1, $2)";
       await client.query(query3, [userId.id_cuenta, arr_prefOrientaciones[i]]);
     }
+
+    console.log("Preferencias insertadas exitosamente");
+
+    res.status(201).json({ message: "Preferencias insertadas exitosamente" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
@@ -123,6 +137,147 @@ export async function checkIfUserHasPreferences(req, res) {
     } else {
       res.json({ hasPreferences: true });
     }
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: error.message });
+  } finally {
+    await client.end();
+  }
+}
+
+export async function updatePreferences(req, res) {
+  const client = getClient();
+
+  try {
+    const token = req.headers.authorization.split(" ")[1];
+    const userId = jwt.decode(token);
+
+    const {
+      estudio,
+      distancia_maxima,
+      min_edad,
+      max_edad,
+      arr_prefSexos,
+      arr_prefOrientaciones,
+      latitud_origen,
+      longitud_origen,
+    } = req.body;
+
+    if (latitud_origen && longitud_origen) {
+      const query_passport = "SELECT check_if_user_has_a_permission($1, $2)";
+      const tiene_passport = await client.query(query_passport, [
+        userId.id_cuenta,
+        "passport",
+      ]);
+      if (tiene_passport) {
+        const query = "SELECT update_preferences($1, $2, $3, $4, $5, $6, $7)";
+        await client.query(query, [
+          userId.id_cuenta,
+          estudio,
+          latitud_origen,
+          longitud_origen,
+          distancia_maxima,
+          min_edad,
+          max_edad,
+        ]);
+        console.log("Ubicación de preferencias actualizada exitosamente");
+      } else {
+        console.log(
+          "El usuario no tiene el permiso para modificar la ubicación de preferencias"
+        );
+        res.status(401).json({
+          message:
+            "El usuario no tiene el permiso para modificar la ubicación de preferencias",
+        });
+      }
+    } else {
+      const query =
+        "SELECT update_preferences(p_id_cuenta := $1, p_estudio := $2, p_distancia_maxima := $3, p_min_edad := $4, p_max_edad := $5)";
+      await client.query(query, [
+        userId.id_cuenta,
+        estudio,
+        distancia_maxima,
+        min_edad,
+        max_edad,
+      ]);
+    }
+
+    console.log("update de preferencias de sexo...");
+    // buscar preferencias de sexo actuales
+    const queryPrefSexos = await client.query(
+      `SELECT sexo FROM pref_sexo WHERE id_cuenta = $1`,
+      [userId.id_cuenta]
+    );
+
+    const oldPrefSexos = queryPrefSexos.rows.map((row) => row.sexo);
+
+    // chequear que pref sexos hay que agregar
+    const PrefSexosToAdd = arr_prefSexos.filter(
+      (prefsex) => !oldPrefSexos.includes(prefsex)
+    );
+
+    // chequear que PrefSexos hay que eliminar
+    const PrefSexosToDelete = oldPrefSexos.filter(
+      (prefsex) => !arr_prefSexos.includes(prefsex)
+    );
+
+    // agregar PrefSexos
+    for (const prefsex of PrefSexosToAdd) {
+      await client.query(`Select insert_pref_sexo ($1, $2)`, [
+        userId.id_cuenta,
+        prefsex,
+      ]);
+    }
+
+    // eliminar PrefSexos
+    for (const prefsex of PrefSexosToDelete) {
+      await client.query(`Select delete_pref_sexo ($1, $2)`, [
+        userId.id_cuenta,
+        prefsex,
+      ]);
+    }
+
+    console.log("update de preferencias de orientación sexual...");
+    // buscar preferencias de orientación sexual actuales
+    const queryPrefOrientaciones = await client.query(
+      `SELECT orientacion_sexual FROM pref_orientacion_sexual WHERE id_cuenta = $1`,
+      [userId.id_cuenta]
+    );
+
+    const oldPrefOrientaciones = queryPrefOrientaciones.rows.map(
+      (row) => row.orientacion_sexual
+    );
+
+    // chequear que pref orientaciones hay que agregar
+    const PrefOrientacionesToAdd = arr_prefOrientaciones.filter(
+      (preforient) => !oldPrefOrientaciones.includes(preforient)
+    );
+
+    // chequear que PrefOrientaciones hay que eliminar
+    const PrefOrientacionesToDelete = oldPrefOrientaciones.filter(
+      (preforient) => !arr_prefOrientaciones.includes(preforient)
+    );
+
+    // agregar PrefOrientaciones
+    for (const preforient of PrefOrientacionesToAdd) {
+      await client.query(`Select insert_pref_orientacion_sexual ($1, $2)`, [
+        userId.id_cuenta,
+        preforient,
+      ]);
+    }
+
+    // eliminar PrefOrientaciones
+    for (const preforient of PrefOrientacionesToDelete) {
+      await client.query(`Select delete_pref_orientacion_sexual ($1, $2)`, [
+        userId.id_cuenta,
+        preforient,
+      ]);
+    }
+
+    console.log("Preferencias actualizadas exitosamente");
+    res.json({
+      message: "Preferencias actualizadas exitosamente",
+    });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });

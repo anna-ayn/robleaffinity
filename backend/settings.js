@@ -18,6 +18,8 @@ export async function getInfoCuenta(req, res) {
     const token = req.headers.authorization.split(" ")[1];
     const userId = jwt.decode(token);
 
+    console.log(userId.id_cuenta);
+
     const querySettings = await client.query(
       `SELECT * FROM get_settings_app_user($1)`,
       [userId.id_cuenta]
@@ -132,6 +134,7 @@ export async function updateSettings(req, res) {
     await client.query(queryInfoCuenta, valuesInfoCuenta);
 
     console.log("Configuraciones actualizadas exitosamente");
+    res.status(200).json({ message: "Configuraciones actualizadas" });
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });

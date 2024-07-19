@@ -216,7 +216,6 @@ export default function SignUp() {
       body: formData,
     })
       .then((response) => {
-        console.log("a")
         if (response.ok) {
           console.log("Cuenta creada correctamente");
           setmostrarModalSuccess(true);
@@ -446,149 +445,180 @@ export default function SignUp() {
                 </select>
               </div>
               {dominio_institucion === "Otra" && (
-                <div className="mb-[15px] flex-grow">
-                  <h3 className="font-bold text-gray-700">
-                    Proporciona los datos de la institución
-                  </h3>
-                  <div className="mb-5">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                      htmlFor="dominio_nuevo_institucion"
-                    >
-                      Dominio de la institución
-                    </label>
-                    <input
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      id="dominio_nuevo_institucion"
-                      type="text"
-                      placeholder="Dominio de la institución"
-                      onChange={(e) =>
-                        setNuevaInstitucion({
-                          ...nuevaInstitucion,
-                          dominio: e.target.value,
-                        })
-                      }
-                      value={nuevaInstitucion.dominio}
-                      required
-                    />
-                  </div>
-                  <div className="mb-5">
-                    <label
-                      className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                      htmlFor="nombre_nuevo_institucion"
-                    >
-                      Nombre de la institución
-                    </label>
-                    <input
-                      className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                      id="nombre_nuevo_institucion"
-                      type="text"
-                      placeholder="Nombre de la institución"
-                      onChange={(e) =>
-                        setNuevaInstitucion({
-                          ...nuevaInstitucion,
-                          nombre: e.target.value,
-                        })
-                      }
-                      value={nuevaInstitucion.nombre}
-                      required
-                    />
-                  </div>
-                  <div className="flex flex-row md:flex-row justify-between">
-                    <div className="mb-[15px] flex-grow">
+                <form
+                  action="https://formcarry.com/s/NYjeJ0KbB-b"
+                  method="POST"
+                  encType="multipart/form-data"
+                >
+                  <div className="mb-[15px] flex-grow">
+                    <h3 className="font-bold text-gray-700">
+                      Proporciona los datos de la institución
+                    </h3>
+                    <div className="mb-5">
                       <label
                         className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                        htmlFor="tipo_nueva_institucion"
+                        htmlFor="dominio_nuevo_institucion"
                       >
-                        Tipo de institución
-                      </label>
-                      <select
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="tipo_institucion"
-                        onChange={(e) =>
-                          setNuevaInstitucion({ tipo: e.target.value })
-                        }
-                        value={nuevaInstitucion.tipo}
-                        required
-                      >
-                        <option value="Politica">Política</option>
-                        <option value="Economica">Económica</option>
-                        <option value="Juridica">Jurídica</option>
-                        <option value="Laboral">Laboral</option>
-                        <option value="Cientifica">Científica</option>
-                        <option value="Universitaria">Universitaria</option>
-                        <option value="Artistica">Artística</option>
-                        <option value="Otro">Otro</option>
-                      </select>
-                    </div>
-                    <div className="w-[1rem]"></div>
-                    <div className="mb-[15px] flex-grow">
-                      <label
-                        className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                        htmlFor="anio_fundacion_nueva_institucion"
-                      >
-                        Año de fundación
+                        Dominio de la institución
                       </label>
                       <input
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                        id="anio_fundacion_nueva_institucion"
-                        type="number"
-                        placeholder="Año de fundación"
+                        id="dominio_nuevo_institucion"
+                        type="text"
+                        placeholder="Dominio de la institución"
                         onChange={(e) =>
                           setNuevaInstitucion({
-                            anio_fundacion: e.target.value,
+                            ...nuevaInstitucion,
+                            dominio: e.target.value,
                           })
                         }
-                        value={nuevaInstitucion.anio_fundacion}
+                        value={nuevaInstitucion.dominio}
+                        required
+                        name="dominio_nuevo_institucion"
+                      />
+                    </div>
+                    <div className="mb-5">
+                      <label
+                        className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                        htmlFor="nombre_nuevo_institucion"
+                      >
+                        Nombre de la institución
+                      </label>
+                      <input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="nombre_nuevo_institucion"
+                        type="text"
+                        placeholder="Nombre de la institución"
+                        onChange={(e) =>
+                          setNuevaInstitucion({
+                            ...nuevaInstitucion,
+                            nombre: e.target.value,
+                          })
+                        }
+                        value={nuevaInstitucion.nombre}
+                        required
+                        name="nombre_nuevo_institucion"
+                      />
+                    </div>
+                    <div className="flex flex-row md:flex-row justify-between">
+                      <div className="mb-[15px] flex-grow">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                          htmlFor="tipo_nueva_institucion"
+                        >
+                          Tipo de institución
+                        </label>
+                        <select
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="tipo_institucion"
+                          onChange={(e) =>
+                            setNuevaInstitucion({ tipo: e.target.value })
+                          }
+                          value={nuevaInstitucion.tipo}
+                          required
+                          name="tipo_nueva_institucion"
+                        >
+                          <option value="Politica">Política</option>
+                          <option value="Economica">Económica</option>
+                          <option value="Juridica">Jurídica</option>
+                          <option value="Laboral">Laboral</option>
+                          <option value="Cientifica">Científica</option>
+                          <option value="Universitaria">Universitaria</option>
+                          <option value="Artistica">Artística</option>
+                          <option value="Otro">Otro</option>
+                        </select>
+                      </div>
+                      <div className="w-[1rem]"></div>
+                      <div className="mb-[15px] flex-grow">
+                        <label
+                          className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                          htmlFor="anio_fundacion_nueva_institucion"
+                        >
+                          Año de fundación
+                        </label>
+                        <input
+                          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                          id="anio_fundacion_nueva_institucion"
+                          type="number"
+                          placeholder="Año de fundación"
+                          onChange={(e) =>
+                            setNuevaInstitucion({
+                              anio_fundacion: e.target.value,
+                            })
+                          }
+                          value={nuevaInstitucion.anio_fundacion}
+                          required
+                          name="anio_fundacion_nueva_institucion"
+                        />
+                      </div>
+                    </div>
+                    <label
+                      className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                      htmlFor="direccion_nueva_institucion"
+                    >
+                      Dirección de la institución{" "}
+                    </label>
+                    <input
+                      className="shadow appearance-none border rounded w-full py-2 px-3 mb-5 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                      id="direccion_nuevo_institucion"
+                      type="text"
+                      placeholder="Dirección"
+                      onChange={(e) =>
+                        setNuevaInstitucion({
+                          ...nuevaInstitucion,
+                          direccion: e.target.value,
+                        })
+                      }
+                      value={nuevaInstitucion.direccion}
+                      name="direccion_nueva_institucion"
+                      required
+                    />
+                    <h6>
+                      Le notificaremos una vez que hayamos verificado la
+                      información de la institución proporcionada. Esta
+                      notificación le informará si el registro puede proceder o
+                      si hay algún inconveniente. Para poder enviarle esta
+                      notificación, por favor proporcione su información de
+                      contacto preferida (correo electrónico o número de
+                      teléfono)
+                    </h6>
+                    <div className="mb-[15px] flex-grow">
+                      <label
+                        className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                        htmlFor="contacto"
+                      >
+                        Teléfono o Correo electrónico
+                      </label>
+                      <input
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                        id="contacto"
+                        type="text"
+                        placeholder="hola@ejemplo.com"
+                        onChange={(e) => setEmail(e.target.value)}
+                        value={email}
+                        name="contacto"
                         required
                       />
                     </div>
+                    <div className="flex justify-center">
+                      {nuevaInstitucion.dominio !== "" &&
+                        nuevaInstitucion.nombre !== "" &&
+                        nuevaInstitucion.tipo !== "" &&
+                        nuevaInstitucion.anio_fundacion !== "" &&
+                        nuevaInstitucion.direccion !== "" && (
+                          <button
+                            type="submit"
+                            className="bg-[#ff8787] hover:bg-[#fab6b6] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                            onClick={() =>
+                              handleOtraInstitucion(nuevaInstitucion)
+                            }
+                          >
+                            Enviar solicitud
+                          </button>
+                        )}
+                    </div>
                   </div>
-                  <label
-                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
-                    htmlFor="direccion_nueva_institucion"
-                  >
-                    Dirección de la institución{" "}
-                  </label>
-                  <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 mb-5 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-                    id="direccion_nuevo_institucion"
-                    type="text"
-                    placeholder="Dirección"
-                    onChange={(e) =>
-                      setNuevaInstitucion({
-                        ...nuevaInstitucion,
-                        direccion: e.target.value,
-                      })
-                    }
-                    value={nuevaInstitucion.direccion}
-                    required
-                  />
-                  <div className="flex justify-between">
-                    <button
-                      className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                      type="button"
-                      onClick={handlePreviousPage}
-                    >
-                      Atrás
-                    </button>
-                    {nuevaInstitucion.dominio !== "" &&
-                      nuevaInstitucion.nombre !== "" &&
-                      nuevaInstitucion.tipo !== "" &&
-                      nuevaInstitucion.anio_fundacion !== "" &&
-                      nuevaInstitucion.direccion !== "" && (
-                        <button
-                          className="bg-[#ff8787] hover:bg-[#fab6b6] text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                          type="button"
-                          onClick={() =>
-                            handleOtraInstitucion(nuevaInstitucion)
-                          }
-                        >
-                          Enviar solicitud
-                        </button>
-                      )}
-                  </div>
-                </div>
+                </form>
               )}
               {dominio_institucion !== null &&
                 dominio_institucion !== "Otra" && (

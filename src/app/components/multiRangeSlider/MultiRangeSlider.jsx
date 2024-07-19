@@ -2,19 +2,35 @@ import { useCallback, useEffect, useState, useRef } from "react";
 import PropTypes from "prop-types";
 import "./multiRangeSlider.css";
 
-export default function MultiRangeSlider({ min, max, setMin, setMax }) {
+export default function MultiRangeSlider({
+  min,
+  max,
+  setMin,
+  setMax,
+  actualMin,
+  actualMax,
+}) {
   MultiRangeSlider.propTypes = {
     min: PropTypes.number.isRequired,
     max: PropTypes.number.isRequired,
     setMin: PropTypes.func.isRequired,
     setMax: PropTypes.func.isRequired,
+    actualMin: PropTypes.number.isRequired,
+    actualMax: PropTypes.number.isRequired,
   };
 
-  const [minVal, setMinVal] = useState(min);
-  const [maxVal, setMaxVal] = useState(max);
+  const [minVal, setMinVal] = useState(actualMin);
+  const [maxVal, setMaxVal] = useState(actualMax);
   const minValRef = useRef(min);
   const maxValRef = useRef(max);
   const range = useRef(null);
+
+  useEffect(() => {
+    setMinVal(actualMin);
+    setMaxVal(actualMax);
+    minValRef.current = actualMin;
+    maxValRef.current = actualMax;
+  }, [actualMin, actualMax]);
 
   // Convert to percentage
   const getPercent = useCallback(

@@ -6,7 +6,6 @@ function Dashboard() {
   const [dataOfUsersToDisplay, setDataOfUsersToDisplay] = useState()
 
   useEffect(() => {
-    console.log("Epa")
     fetch("http://localhost:3001/api/getPeopleByPreferences", {
       method: "GET",
       headers: {

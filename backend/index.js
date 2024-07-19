@@ -2,19 +2,21 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import multer from "multer";
-import { createAccount, login, getData } from "./cuenta.js";
+import { createAccount, login, getData, getAnotherUserData } from "./cuenta.js";
 import { getInstituciones } from "./instituciones.js";
-import { getPreferences, insertPreferences } from "./preferencias.js";
+import {
+  getPreferences,
+  insertPreferences,
+  checkIfUserHasPreferences,
+  updatePreferences,
+} from "./preferencias.js";
 import { editDescription, verifiedUser } from "./perfil.js";
 import { updateHobbies } from "./hobbies.js";
 import { updateHabilidades } from "./habilidades.js";
-import { addPhoto } from "./fotos.js";
-import { deletePhoto } from "./fotos.js";
+import { addPhoto, deletePhoto } from "./fotos.js";
 import { updateOrientaciones } from "./orientaciones.js";
-import { addCertificacion } from "./certificaciones.js";
-import { deleteCertificacion } from "./certificaciones.js";
-import { addAgrupacion } from "./agrupaciones.js";
-import { deleteAgrupacion } from "./agrupaciones.js";
+import { addCertificacion, deleteCertificacion } from "./certificaciones.js";
+import { addAgrupacion, deleteAgrupacion } from "./agrupaciones.js";
 import { addTitulo, deleteTitulo } from "./titulos.js";
 import { addTrabajaEn, deleteTrabajaEn } from "./trabaja_en.js";
 import { getInfoCuenta, updateInfoCuenta, updateSettings } from "./settings.js";
@@ -66,6 +68,10 @@ app.get("/api/getInfoCuenta", getInfoCuenta);
 app.post("/api/updateSettings", updateSettings);
 app.post("/api/updateInfoCuenta", updateInfoCuenta);
 app.get("/api/getPeopleByPreferences", getUsersByPreferences);
+app.post("/api/checkIfUserHasPreferences", checkIfUserHasPreferences);
+app.post("/api/updatePreferences", updatePreferences);
+
+app.get("/api/getAnotherUserData", getAnotherUserData);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

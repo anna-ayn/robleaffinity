@@ -4,6 +4,7 @@ import AskPreferences from "../pages/AskPreferences";
 import Sidebar from "../components/Sidebar";
 
 export default function Settings() {
+  const [thereisdata, setThereisdata] = useState(false);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [telefono, setTelefono] = useState(null);
@@ -14,6 +15,7 @@ export default function Settings() {
   const [newPassword, setNewPassword] = useState(null);
   const [newTelefono, setNewTelefono] = useState(null);
   const [editInfo, setEditInfo] = useState(false);
+  const [userHasPreference, setUserHasPreference] = useState(false);
 
   const getInfoCuenta = () => {
     fetch("http://localhost:3001/api/getInfoCuenta", {
@@ -36,6 +38,25 @@ export default function Settings() {
 
   useEffect(() => {
     getInfoCuenta();
+    fetch("http://localhost:3001/api/checkIfUserHasPreferences", {
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.hasPreferences === true) {
+          setUserHasPreference(true);
+        }
+        setThereisdata(true);
+      })
+      .catch((error) => {
+        alert("Error 500 al obtener la informacion de la cuenta: ", error);
+        return;
+      });
   }, []);
 
   const saveSettings = () => {
@@ -121,6 +142,10 @@ export default function Settings() {
       });
   };
 
+  if (!thereisdata) {
+    return <div>Cargando info de la cuenta...</div>;
+  }
+
   return (
     <div>
       <Sidebar />
@@ -132,13 +157,13 @@ export default function Settings() {
               <div>
                 <div className="mb-[15px] flex-grow">
                   <label
-                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    className="block text-white text-sm font-bold mb-2 text-left"
                     htmlFor="email"
                   >
                     Correo electrónico
                   </label>
                   <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                     id="email"
                     type="email"
                     placeholder="hola@ejemplo.com"
@@ -150,13 +175,13 @@ export default function Settings() {
                 </div>
                 <div className="mb-[15px] flex-grow">
                   <label
-                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    className="block text-white text-sm font-bold mb-2 text-left"
                     htmlFor="phone"
                   >
                     Teléfono
                   </label>
                   <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                     id="phone"
                     type="tel"
                     placeholder="Teléfono"
@@ -168,13 +193,13 @@ export default function Settings() {
                 </div>
                 <div className="mb-[15px] flex-grow">
                   <label
-                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    className="block text-white text-sm font-bold mb-2 text-left"
                     htmlFor="password"
                   >
                     Contraseña actual
                   </label>
                   <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                     id="password"
                     type="password"
                     placeholder="********"
@@ -185,13 +210,13 @@ export default function Settings() {
                 </div>
                 <div className="mb-[15px] flex-grow">
                   <label
-                    className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                    className="block text-white text-sm font-bold mb-2 text-left"
                     htmlFor="newPassword"
                   >
                     Contraseña nueva
                   </label>
                   <input
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                     id="newPassword"
                     type="password"
                     placeholder="********"
@@ -211,19 +236,19 @@ export default function Settings() {
               </div>
             ) : (
               <div className="mb-[15px] flex-grow">
-                <p className="text-gray-700 text-sm font-bold mb-2 text-left">
+                <p className="text-white text-sm font-bold mb-5 text-left">
                   Correo electrónico:{" "}
                   <span className="text-black text-[1rem] font-normal">
                     {email}
                   </span>
                 </p>
-                <p className="text-gray-700 text-sm font-bold mb-2 text-left">
+                <p className="text-white text-sm font-bold mb-5 text-left">
                   Teléfono:{" "}
                   <span className="text-black text-[1rem] font-normal">
                     {telefono}
                   </span>
                 </p>
-                <p className="text-gray-700 text-sm font-bold mb-2 text-left">
+                <p className="text-white text-sm font-bold mb-5 text-left">
                   Contraseña:{" "}
                   <span className="text-black text-[1rem] font-normal">
                     ********
@@ -245,13 +270,13 @@ export default function Settings() {
             <div>
               <div className="mb-[15px] flex-grow">
                 <label
-                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                  className="block text-white text-sm font-bold mb-2 text-left"
                   htmlFor="theme"
                 >
                   Tema
                 </label>
                 <select
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                   id="theme"
                   onChange={(e) => setNewTheme(e.target.value)}
                   value={newTheme}
@@ -263,13 +288,13 @@ export default function Settings() {
               </div>
               <div className="mb-[15px] flex-grow">
                 <label
-                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                  className="block text-white text-sm font-bold mb-2 text-left"
                   htmlFor="language"
                 >
                   Idioma
                 </label>
                 <select
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                   id="language"
                   onChange={(e) => setNewLanguage(e.target.value)}
                   value={newLanguage}
@@ -281,13 +306,13 @@ export default function Settings() {
               </div>
               <div className="mb-[15px] flex-grow">
                 <label
-                  className="block text-gray-700 text-sm font-bold mb-2 text-left"
+                  className="block text-white text-sm font-bold mb-2 text-left"
                   htmlFor="notifications"
                 >
                   Notificaciones
                 </label>
                 <select
-                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-black leading-tight focus:outline-none focus:shadow-outline"
                   id="notifications"
                   onChange={(e) => setNewNotifications(e.target.value)}
                   value={newNotifications}
@@ -307,7 +332,7 @@ export default function Settings() {
               Guardar
             </button>
           </div>
-          <AskPreferences firstTime={false} />
+          <AskPreferences firstTime={!userHasPreference} />
         </div>
       </div>
     </div>

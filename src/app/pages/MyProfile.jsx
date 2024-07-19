@@ -731,7 +731,7 @@ function MyProfile() {
             />
             <div className="flex justify-between mt-2">
               <button
-                className="text-white border-2 border-black py-1 px-1 rounded-lg"
+                className="text-black border-2 border-black py-1 px-1 rounded-lg"
                 onClick={() => {
                   setShowAddPhoto(false);
                   setBase64Img("");
@@ -742,7 +742,7 @@ function MyProfile() {
               </button>
               {showBotonAceptar && (
                 <button
-                  className="text-white border-2 border-black py-1 px-1 rounded-lg"
+                  className="text-black border-2 border-black py-1 px-1 rounded-lg"
                   onClick={handlePhotoAdd}
                 >
                   Aceptar
@@ -873,7 +873,7 @@ function MyProfile() {
 
             <div className="flex justify-between mt-2">
               <button
-                className="text-white border-2 border-black py-1 px-1 rounded-lg"
+                className="text-black border-2 border-black py-1 px-1 rounded-lg"
                 onClick={() => {
                   setAgregarTitulo(false);
                   setGrado("Maestria");
@@ -888,7 +888,7 @@ function MyProfile() {
               {especialidad !== "" &&
                 (anio_fin !== "") & (anio_inicio !== "") && (
                   <button
-                    className="text-white border-2 border-black py-1 px-1 rounded-lg"
+                    className="text-black border-2 border-black py-1 px-1 rounded-lg"
                     onClick={addTitulo}
                   >
                     Aceptar
@@ -973,7 +973,7 @@ function MyProfile() {
             </div>
             <div className="flex justify-between mt-2">
               <button
-                className="text-white border-2 border-black py-1 px-1 rounded-lg"
+                className="text-black border-2 border-black py-1 px-1 rounded-lg"
                 onClick={() => {
                   setAgregarTrabajo(false);
                   setEmpresa("");
@@ -988,7 +988,7 @@ function MyProfile() {
                 (puesto !== "") & (fecha_inicio_trabajo !== "") &&
                 validator.isURL(urlEmpresa) && (
                   <button
-                    className="text-white border-2 border-black py-1 px-1 rounded-lg"
+                    className="text-black border-2 border-black py-1 px-1 rounded-lg"
                     onClick={addEmpresa}
                   >
                     Aceptar
