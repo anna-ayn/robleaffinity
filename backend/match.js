@@ -9,10 +9,26 @@ export async function getUsersByPreferences(req, res) {
     const dataDecoded = jwt.decode(token);
     const userId = dataDecoded.id_cuenta;
 
-    const preferenceQuery = `
-      SELECT pref_id_cuentas AS account_id
-      FROM get_users_by_preferences_free_user($1)
-    `;
+    // chequear si el usuario tiene el permiso passport
+    const checkpassportquery = `SELECT check_if_user_has_a_permission($1, 'passport')`;
+    const checkpassportValues = [userId];
+    const checkpassportResult = await client.query(
+      checkpassportquery,
+      checkpassportValues
+    );
+
+    let preferenceQuery;
+    if (checkpassportResult.rows[0].check_if_user_has_a_permission === false) {
+      preferenceQuery = `
+        SELECT pref_id_cuentas AS account_id
+        FROM get_users_by_preferences_free_user($1)
+      `;
+    } else {
+      preferenceQuery = `
+        SELECT pref_id_cuentas AS account_id
+        FROM get_users_by_preferences_passport_user($1)
+      `;
+    }
 
     const preferenceValues = [userId];
     const preferenceResult = await client.query(
