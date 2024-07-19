@@ -8,7 +8,7 @@ const Sidebar = () => {
     <div>
       <aside className="fixed top-0 left-0 z-40 pt-10 w-[250px] bg-[#996ff242] backdrop-blur-xl shadow-xl h-screen transition-transform -translate-x-full sm:translate-x-0 flex flex-col">
         <h3 className="text-2xl">Menu</h3>
-        <div className="flex flex-col justify-evenly gap-72">
+        <div className="flex flex-col justify-evenly gap-40">
           <div className="mx-3 px-4 py-2 w-30 ">
             <button
               className="w-full px-4 py-2 mb-5 text-sm border-x-2 border-[#de5466] hover:animate-pulse hover:text-black"
@@ -33,7 +33,7 @@ const Sidebar = () => {
               onClick={() => (window.location.href = "/tarjetas")}
             >
               Tarjetas
-            </button>                    
+            </button>
             <button
               className="w-full px-4 py-2 text-sm border-x-2 border-[#de5466] hover:animate-pulse hover:text-black"
               onClick={() => (window.location.href = "/settings")}
