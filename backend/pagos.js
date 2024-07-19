@@ -274,7 +274,7 @@ export async function getPaymentsByAccount(req, res) {
     const dataDecoded = jwt.decode(token);
     const accountId = dataDecoded.id_cuenta;
 
-    const paymentsQuery = "SELECT * FROM get_payments_by_account($1)";
+    const paymentsQuery = "SELECT * FROM realiza WHERE id_cuenta = $1";
     const paymentsValues = [accountId];
     const paymentsResult = await client.query(paymentsQuery, paymentsValues);
     const payments = paymentsResult.rows;
