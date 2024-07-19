@@ -5,7 +5,10 @@ import Dashboard from "./pages/Dashboard";
 import AskPreferences from "./pages/AskPreferences";
 import MyProfile from "./pages/MyProfile";
 import Settings from "./pages/Settings";
+import Payments from "./pages/Payments";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+
 function App() {
   return (
     <BrowserRouter>
@@ -18,6 +21,7 @@ function App() {
           path="/first-time-setting-preferences"
           element={<AskPreferences firstTime={true} />}
         />
+        <Route path="/payments" element={<Payments />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/MyProfile" element={<MyProfile />} />
         <Route path="/settings" element={<Settings />} />

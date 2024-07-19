@@ -66,6 +66,14 @@ export default function SignUp() {
         anio_inicio === "" ||
         anio_fin === ""
       ) {
+        console.log(
+          dominio_institucion,
+          grado,
+          especialidad,
+          anio_inicio,
+          anio_fin
+
+        )
         alert("Por favor, llene todos los campos");
         return;
       }
