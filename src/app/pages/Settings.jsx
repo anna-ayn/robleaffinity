@@ -38,19 +38,20 @@ export default function Settings() {
 
   useEffect(() => {
     const fetchUserPreferences = async () => {
-
       try {
-
         await getInfoCuenta();
 
-        const response = await fetch("http://localhost:3001/api/checkIfUserHasPreferences", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await fetch(
+          "http://localhost:3001/api/checkIfUserHasPreferences",
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         const data = await response.json();
 
@@ -59,13 +60,13 @@ export default function Settings() {
         }
         setThereisdata(true);
       } catch (error) {
-        console.log(error)
+        console.log(error);
         alert("Error 500 al obtener la informacion de la cuenta: ", error);
       }
     };
 
     fetchUserPreferences();
-  }, [])
+  }, []);
 
   const saveSettings = () => {
     fetch("http://localhost:3001/api/updateSettings", {
@@ -340,7 +341,7 @@ export default function Settings() {
               Guardar
             </button>
           </div>
-          <AskPreferences firstTime={!userHasPreference} />
+          <AskPreferences firstTime={userHasPreference} />
         </div>
       </div>
     </div>
