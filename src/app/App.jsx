@@ -7,7 +7,7 @@ import MyProfile from "./pages/MyProfile";
 import Settings from "./pages/Settings";
 import Payments from "./pages/Payments";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
+import Tarjetas from "./pages/Tarjetas"
 
 function App() {
   return (
@@ -21,6 +21,7 @@ function App() {
           path="/first-time-setting-preferences"
           element={<AskPreferences firstTime={true} />}
         />
+        <Route path="/tarjetas" element={<Tarjetas />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/MyProfile" element={<MyProfile />} />

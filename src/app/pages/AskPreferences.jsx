@@ -20,6 +20,8 @@ function AskPreferences({ firstTime }) {
   const [latitud_origen, setLatitudOrigen] = useState(0);
   const [longitud_origen, setLongitudOrigen] = useState(0);
   const [thereisdata, setThereisdata] = useState(false);
+  const [userHasPreference,setUserHasPreference] = useState(false)
+
 
   const genreOptions = [
     { value: "F", label: "Femenino" },
@@ -84,10 +86,10 @@ function AskPreferences({ firstTime }) {
       max_edad: maxEdad,
       arr_prefSexos: sexo,
       arr_prefOrientaciones: orientacion,
-      latitud_origen: latitud_origen,
-      longitud_origen: longitud_origen,
+      latitud_origen: firstTime ? latitud_origen : null,
+      longitud_origen: firstTime ? longitud_origen : null ,
     };
-    if (firstTime) {
+    if (firstTime && !thereisdata && userHasPreference) {
       fetch("http://localhost:3001/api/insertPreferences", {
         method: "POST",
         headers: {
@@ -100,7 +102,6 @@ function AskPreferences({ firstTime }) {
         .then((response) => {
           if (response.ok) {
             alert("Preferencias guardadas con exito");
-            // ir al dashboard
             window.location.href = "/dashboard";
             return response.text();
           } else {
@@ -119,13 +120,13 @@ function AskPreferences({ firstTime }) {
           alert("Error 500 al guardar las preferencias: ", error);
         });
     } else {
-      if (
-        !validator.isLatLong(latitud_origen, longitud_origen) &&
+      /*if (
+        latitude && longitud && !validator.isLatLong(latitud_origen, longitud_origen) &&
         userWithPassport
       ) {
         alert("Las coordenadas no son validas");
         return;
-      }
+      }*/
       fetch("http://localhost:3001/api/updatePreferences", {
         method: "POST",
         headers: {
@@ -157,6 +158,35 @@ function AskPreferences({ firstTime }) {
         });
     }
   };
+
+  useEffect(() => {
+    const fetchUserPreferences = async () => {
+
+      try {
+
+        const response = await fetch("http://localhost:3001/api/checkIfUserHasPreferences", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        const data = await response.json();
+
+        if (data.hasPreferences === true) {
+          setUserHasPreference(true);
+        }
+        setThereisdata(true);
+      } catch (error) {
+        console.log(error)
+        alert("Error 500 al obtener la informacion de la cuenta: ", error);
+      }
+    };
+
+    fetchUserPreferences();
+  }, [])
 
   if (!thereisdata && !firstTime) {
     return <div>Cargando preferencias...</div>;

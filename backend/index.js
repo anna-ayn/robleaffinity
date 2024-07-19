@@ -21,7 +21,7 @@ import { addTitulo, deleteTitulo } from "./titulos.js";
 import { addTrabajaEn, deleteTrabajaEn } from "./trabaja_en.js";
 import { getInfoCuenta, updateInfoCuenta, updateSettings } from "./settings.js";
 import { getUsersByPreferences } from "./match.js"
-import { insertUserTarjeta, deleteInstanceRegistra, updateDueDateCard, getDataPago, subscribeUserToTier} from "./pagos.js"
+import { insertUserTarjeta, deleteInstanceRegistra, updateDueDateCard, getDataPago, subscribeUserToTier, getDataOfCards} from "./pagos.js"
 
 const app = express();
 const port = 3001;
@@ -77,6 +77,8 @@ app.post("/api/deleteRegisterInstance", deleteInstanceRegistra);
 app.post("/api/updateDueDateCard", updateDueDateCard);
 app.get("/api/getPaymentData", getDataPago);
 app.post("/api/subscribeUserToTier", subscribeUserToTier);
+app.get("/api/getDataOfCards", getDataOfCards);
+
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

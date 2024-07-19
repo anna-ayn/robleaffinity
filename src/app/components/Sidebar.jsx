@@ -27,7 +27,13 @@ const Sidebar = () => {
               onClick={() => (window.location.href = "/payments")}
             >
               Pagos
-            </button>            
+            </button>
+            <button
+              className="w-full px-4 py-2 mb-5 text-sm border-x-2 border-[#de5466] hover:animate-pulse hover:text-black"
+              onClick={() => (window.location.href = "/tarjetas")}
+            >
+              Tarjetas
+            </button>                    
             <button
               className="w-full px-4 py-2 text-sm border-x-2 border-[#de5466] hover:animate-pulse hover:text-black"
               onClick={() => (window.location.href = "/settings")}

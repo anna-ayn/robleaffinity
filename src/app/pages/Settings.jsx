@@ -38,9 +38,11 @@ export default function Settings() {
 
   useEffect(() => {
     const fetchUserPreferences = async () => {
-      await getInfoCuenta();
 
       try {
+
+        await getInfoCuenta();
+
         const response = await fetch("http://localhost:3001/api/checkIfUserHasPreferences", {
           method: "POST",
           headers: {

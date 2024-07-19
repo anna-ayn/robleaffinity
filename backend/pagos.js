@@ -15,7 +15,7 @@ export async function insertUserTarjeta(req, res) {
     SELECT insert_user_tarjeta($1, $2, $3, $4, $5, $6)
   `;
     const values = [userId, card_number, titular, due_date, cvv, type_card];    
-
+    console.log(values)
     await client.query(query, values);
     res.status(200).json({ message: 'Tarjeta insertada correctamente' });
   } catch (error) {
@@ -40,6 +40,7 @@ export async function deleteInstanceRegistra(req, res) {
         SELECT delete_instance_registra($1, $2)
       `;
       const values = [userId, card_number];
+      console.log(values)
   
       await client.query(query, values);
       res.status(200).json({ message: 'Registro eliminado correctamente' });
@@ -149,3 +150,64 @@ export async function subscribeUserToTier(req, res) {
   }
 }
 
+export async function getDataOfCards(req, res) {
+    const client = getClient();
+
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+        return res.status(401).json({ message: 'Token de autorización no proporcionado' });
+    }
+
+    try {
+        const dataDecoded = jwt.decode(token);
+        const id_cuenta_usuario = dataDecoded.id_cuenta;
+        const query = 'SELECT * FROM get_user_cards($1)';
+        const values = [id_cuenta_usuario];
+        const result = await client.query(query, values);
+        const cards = result.rows;
+        res.status(200).json(cards);
+    } catch (error) {
+        console.error('Error en la verificación del token:', error);
+        res.status(401).json({ message: 'Token inválido' });
+    } finally {
+        await client.end();
+    }
+}
+
+export async function getPaymentsByAccount(req, res) {
+    const client = getClient();
+
+    const token = req.headers.authorization?.split(" ")[1];
+
+    if (!token) {
+        return res.status(401).json({ message: 'Token de autorización no proporcionado' });
+    }
+
+    try {
+        const dataDecoded = jwt.decode(token);
+        const accountId = dataDecoded.id_cuenta;
+
+        const paymentsQuery = 'SELECT * FROM get_payments_by_account($1)';
+        const paymentsValues = [accountId];
+        const paymentsResult = await client.query(paymentsQuery, paymentsValues);
+        const payments = paymentsResult.rows;
+
+        const detailedPayments = [];
+        for (const payment of payments) {
+            const paymentDetailsQuery = 'SELECT * FROM get_data_pago($1)';
+            const paymentDetailsValues = [payment.id_pago];
+            const paymentDetailsResult = await client.query(paymentDetailsQuery, paymentDetailsValues);
+            if (paymentDetailsResult.rows.length > 0) {
+                detailedPayments.push(paymentDetailsResult.rows[0]);
+            }
+        }
+
+        res.status(200).json(detailedPayments);
+    } catch (error) {
+        console.error('Error en la verificación del token o consulta a la base de datos:', error);
+        res.status(401).json({ message: 'Token inválido o error en la consulta' });
+    } finally {
+        await client.end();
+    }
+}

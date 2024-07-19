@@ -89,7 +89,7 @@ export async function insertPreferences(req, res) {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const userId = jwt.decode(token);
-
+    
     const {
       estudio,
       distancia_maxima,
@@ -187,6 +187,17 @@ export async function updatePreferences(req, res) {
       latitud_origen,
       longitud_origen,
     } = req.body;
+
+    console.log(
+      estudio,
+      distancia_maxima,
+      min_edad,
+      max_edad,
+      arr_prefSexos,
+      arr_prefOrientaciones,
+      latitud_origen,
+      longitud_origen,
+    )
 
     if (latitud_origen && longitud_origen) {
       const query_passport = "SELECT check_if_user_has_a_permission($1, $2)";
