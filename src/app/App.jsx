@@ -16,16 +16,11 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/log-in" element={<LogIn />} />
-        <Route path="/preferences" element={<AskPreferences />} />
-        <Route
-          path="/first-time-setting-preferences"
-          element={<AskPreferences firstTime={true} inSettings={false} />}
-        />
         <Route path="/tarjetas" element={<Tarjetas />} />
         <Route path="/payments" element={<Payments />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/MyProfile" element={<MyProfile />} />
-        <Route path="/settings" element={<Settings inSettings={true} />} />
+        <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
       </Routes>
     </BrowserRouter>

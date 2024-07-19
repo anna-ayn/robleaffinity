@@ -4,7 +4,7 @@ import AskPreferences from "../pages/AskPreferences";
 import Sidebar from "../components/Sidebar";
 
 export default function Settings() {
-  const [thereisdata, setThereisdata] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [telefono, setTelefono] = useState(null);
@@ -15,7 +15,6 @@ export default function Settings() {
   const [newPassword, setNewPassword] = useState(null);
   const [newTelefono, setNewTelefono] = useState(null);
   const [editInfo, setEditInfo] = useState(false);
-  const [userHasPreference, setUserHasPreference] = useState(false);
 
   const getInfoCuenta = () => {
     fetch("http://localhost:3001/api/getInfoCuenta", {
@@ -37,35 +36,16 @@ export default function Settings() {
   };
 
   useEffect(() => {
-    const fetchUserPreferences = async () => {
+    const fetchInfoCuenta = async () => {
       try {
         await getInfoCuenta();
-
-        const response = await fetch(
-          "http://localhost:3001/api/checkIfUserHasPreferences",
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        if (data.hasPreferences === true) {
-          setUserHasPreference(true);
-        }
-        setThereisdata(true);
+        setShowSettings(true);
       } catch (error) {
         console.log(error);
         alert("Error 500 al obtener la informacion de la cuenta: ", error);
       }
     };
-
-    fetchUserPreferences();
+    fetchInfoCuenta();
   }, []);
 
   const saveSettings = () => {
@@ -151,7 +131,7 @@ export default function Settings() {
       });
   };
 
-  if (!thereisdata) {
+  if (!showSettings) {
     return <div>Cargando info de la cuenta...</div>;
   }
 
@@ -341,7 +321,7 @@ export default function Settings() {
               Guardar
             </button>
           </div>
-          <AskPreferences firstTime={userHasPreference} inSettings={true} />
+          <AskPreferences />
         </div>
       </div>
     </div>

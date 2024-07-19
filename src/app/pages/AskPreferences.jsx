@@ -3,9 +3,8 @@ import { useEffect, useState } from "react";
 import MultiRangeSlider from "../components/multiRangeSlider/MultiRangeSlider";
 import MultiSelect from "../components/MultiSelect";
 import PropTypes from "prop-types";
-import validator from "validator";
 
-function AskPreferences({ firstTime, inSettings = false }) {
+function AskPreferences() {
   AskPreferences.propTypes = {
     firstTime: PropTypes.bool,
     inSettings: PropTypes.bool,
@@ -20,8 +19,7 @@ function AskPreferences({ firstTime, inSettings = false }) {
   const [userWithPassport, setUserWithPassport] = useState(false);
   const [latitud_origen, setLatitudOrigen] = useState(0);
   const [longitud_origen, setLongitudOrigen] = useState(0);
-  const [thereisdata, setThereisdata] = useState(false);
-  const [userHasPreference, setUserHasPreference] = useState(false);
+  const [showPreferences, setShowPreferences] = useState(false);
 
   const genreOptions = [
     { value: "F", label: "Femenino" },
@@ -62,7 +60,6 @@ function AskPreferences({ firstTime, inSettings = false }) {
         setOrientacion(data.prefOrientaciones);
         setLatitudOrigen(data.latitud_origen);
         setLongitudOrigen(data.longitud_origen);
-        setThereisdata(true);
         setUserWithPassport(data.tiene_passport);
       })
       .catch((e) => {
@@ -71,12 +68,16 @@ function AskPreferences({ firstTime, inSettings = false }) {
   };
 
   useEffect(() => {
-    if (!firstTime) {
-      getPreferences();
-    } else {
-      setSexo([""]);
-      setOrientacion([""]);
-    }
+    const fetchPreferences = async () => {
+      try {
+        await getPreferences();
+        setShowPreferences(true);
+      } catch (error) {
+        console.log(error);
+        alert("Error 500 al obtener la informacion de la cuenta: ", error);
+      }
+    };
+    fetchPreferences();
   }, []);
 
   const onSave = () => {
@@ -87,110 +88,41 @@ function AskPreferences({ firstTime, inSettings = false }) {
       max_edad: maxEdad,
       arr_prefSexos: sexo,
       arr_prefOrientaciones: orientacion,
-      latitud_origen: firstTime ? latitud_origen : null,
-      longitud_origen: firstTime ? longitud_origen : null,
+      latitud_origen: latitud_origen,
+      longitud_origen: longitud_origen,
     };
-    if ((firstTime && !thereisdata && !userHasPreference) || !inSettings) {
-      fetch("http://localhost:3001/api/insertPreferences", {
-        method: "POST",
-        headers: {
-          Accept: "./multipart/form-data",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(dataJSON),
-      })
-        .then((response) => {
-          if (response.ok) {
-            alert("Preferencias guardadas con exito");
-            window.location.href = "/dashboard";
-            return response.text();
-          } else {
-            response.text().then((text) => {
-              alert(Error(text));
-            });
+    fetch("http://localhost:3001/api/updatePreferences", {
+      method: "POST",
+      headers: {
+        Accept: "./multipart/form-data",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+      },
+      body: JSON.stringify(dataJSON),
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Preferencias guardadas con exito");
+          alert("Preferencias guardadas con exito");
+          return response.text();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
 
-            console.log(
-              response.text().then((text) => {
-                throw new Error(text);
-              })
-            );
-          }
-        })
-        .catch((error) => {
-          alert("Error 500 al guardar las preferencias: ", error);
-        });
-    } else {
-      /*if (
-        latitude && longitud && !validator.isLatLong(latitud_origen, longitud_origen) &&
-        userWithPassport
-      ) {
-        alert("Las coordenadas no son validas");
-        return;
-      }*/
-      fetch("http://localhost:3001/api/updatePreferences", {
-        method: "POST",
-        headers: {
-          Accept: "./multipart/form-data",
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify(dataJSON),
-      })
-        .then((response) => {
-          if (response.ok) {
-            console.log("Preferencias guardadas con exito");
-            alert("Preferencias guardadas con exito");
-            return response.text();
-          } else {
+          console.log(
             response.text().then((text) => {
-              alert(Error(text));
-            });
-
-            console.log(
-              response.text().then((text) => {
-                throw new Error(text);
-              })
-            );
-          }
-        })
-        .catch((error) => {
-          alert("Error 500 al guardar las preferencias: ", error);
-        });
-    }
+              throw new Error(text);
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        alert("Error 500 al guardar las preferencias: ", error);
+      });
   };
 
-  useEffect(() => {
-    const fetchUserPreferences = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:3001/api/checkIfUserHasPreferences",
-          {
-            method: "POST",
-            headers: {
-              Accept: "application/json",
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
-          }
-        );
-
-        const data = await response.json();
-
-        if (data.hasPreferences === true) {
-          setUserHasPreference(true);
-        }
-        setThereisdata(true);
-      } catch (error) {
-        console.log(error);
-        alert("Error 500 al obtener la informacion de la cuenta: ", error);
-      }
-    };
-
-    fetchUserPreferences();
-  }, []);
-
-  if (!thereisdata && !firstTime && !inSettings) {
+  if (!showPreferences) {
     return <div>Cargando preferencias...</div>;
   }
 

@@ -4,12 +4,7 @@ import cors from "cors";
 import multer from "multer";
 import { createAccount, login, getData, getAnotherUserData } from "./cuenta.js";
 import { getInstituciones } from "./instituciones.js";
-import {
-  getPreferences,
-  insertPreferences,
-  checkIfUserHasPreferences,
-  updatePreferences,
-} from "./preferencias.js";
+import { getPreferences, updatePreferences } from "./preferencias.js";
 import { editDescription, verifiedUser } from "./perfil.js";
 import { updateHobbies } from "./hobbies.js";
 import { updateHabilidades } from "./habilidades.js";
@@ -56,7 +51,6 @@ app.post("/api/cuentas", upload.none(), createAccount);
 app.post("/api/login", login);
 app.get("/api/getData", getData);
 app.get("/api/getPreferences", getPreferences);
-app.post("/api/insertPreferences", insertPreferences);
 app.post("/api/editDescription", editDescription);
 app.post("/api/verificarUsuario", verifiedUser);
 app.post("/api/hobbies", updateHobbies);
@@ -76,7 +70,6 @@ app.get("/api/getInfoCuenta", getInfoCuenta);
 app.post("/api/updateSettings", updateSettings);
 app.post("/api/updateInfoCuenta", updateInfoCuenta);
 app.get("/api/getPeopleByPreferences", getUsersByPreferences);
-app.post("/api/checkIfUserHasPreferences", checkIfUserHasPreferences);
 app.post("/api/updatePreferences", updatePreferences);
 app.get("/api/getAnotherUserData", getAnotherUserData);
 app.post("/api/insertUserCard", insertUserTarjeta);
