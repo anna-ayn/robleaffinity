@@ -95,10 +95,15 @@ function Dashboard() {
       <Sidebar />
       {dataOfUsersToDisplay ? (
         <div>
-          {dataOfUsersToDisplay.map((user) => (
+          {dataOfUsersToDisplay.userIds.map((user) => (
             <div key={user} className="my-10 justify-center">
+              {dataOfUsersToDisplay.superUsers.includes(user) && (
+                <div className="ml-[15rem] mt-5 bg-blue-500 text-white rounded-md p-2">
+                  ¡Te ha dado superlike!
+                </div>
+              )}
               <Profile id_usuario={user} />
-              <div className="ml-[15rem] mt-5 flex flex-row justify-around ">
+              <div className="ml-[15rem] flex flex-row justify-around ">
                 <button
                   className="bg-red-500 text-white rounded-md p-2"
                   onClick={() => insertSwipe(user)}

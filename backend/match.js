@@ -9,25 +9,41 @@ export async function getUsersByPreferences(req, res) {
     const dataDecoded = jwt.decode(token);
     const userId = dataDecoded.id_cuenta;
 
-    // chequear si el usuario tiene el permiso passport
-    const checkpassportquery = `SELECT check_if_user_has_a_permission($1, 'passport')`;
-    const checkpassportValues = [userId];
-    const checkpassportResult = await client.query(
-      checkpassportquery,
-      checkpassportValues
+    // chequear si el usuario tiene preferencias
+    const queryHasPreferences = `SELECT * from preferencias WHERE id_cuenta = $1`;
+    const valuesHasPreferences = [userId];
+    const resultHasPreferences = await client.query(
+      queryHasPreferences,
+      valuesHasPreferences
     );
 
     let preferenceQuery;
-    if (checkpassportResult.rows[0].check_if_user_has_a_permission === false) {
+    if (resultHasPreferences.rows.length === 0) {
       preferenceQuery = `
+      SELECT id_cuenta_at_max_distance AS account_id 
+      FROM get_all_users_by_max_distance($1)`;
+    } else {
+      // chequear si el usuario tiene el permiso passport
+      const checkpassportquery = `SELECT check_if_user_has_a_permission($1, 'passport')`;
+      const checkpassportValues = [userId];
+      const checkpassportResult = await client.query(
+        checkpassportquery,
+        checkpassportValues
+      );
+
+      if (
+        checkpassportResult.rows[0].check_if_user_has_a_permission === false
+      ) {
+        preferenceQuery = `
         SELECT pref_id_cuentas AS account_id
         FROM get_users_by_preferences_free_user($1)
       `;
-    } else {
-      preferenceQuery = `
+      } else {
+        preferenceQuery = `
         SELECT pref_id_cuentas AS account_id
         FROM get_users_by_preferences_passport_user($1)
       `;
+      }
     }
 
     const preferenceValues = [userId];
@@ -39,7 +55,31 @@ export async function getUsersByPreferences(req, res) {
 
     console.log(userIds);
 
-    res.json(userIds);
+    // chequear si alguno de estos usuarios dieron superlike a este usuario
+    const superlikeQuery = `
+      SELECT id_liker
+      FROM likes
+      WHERE id_liked = $1 AND super = TRUE
+    `;
+
+    const superlikeValues = [userId];
+    const superlikeResult = await client.query(superlikeQuery, superlikeValues);
+
+    let superlikeUserIds = [];
+
+    for (let i = 0; i < superlikeResult.rows.length; i++) {
+      if (userIds.includes(superlikeResult.rows[i].id_liker))
+        superlikeUserIds.push(superlikeResult.rows[i].id_liker);
+    }
+
+    const data = {
+      userIds: userIds,
+      superUsers: superlikeUserIds,
+    };
+
+    console.log(data);
+
+    res.json(data);
   } catch (error) {
     console.log(error);
     res.status(500).json({ message: error.message });
