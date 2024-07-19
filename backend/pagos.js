@@ -274,7 +274,7 @@ export async function getPaymentsByAccount(req, res) {
     const dataDecoded = jwt.decode(token);
     const accountId = dataDecoded.id_cuenta;
 
-    const paymentsQuery = "SELECT * FROM get_payments_by_account($1)";
+    const paymentsQuery = "SELECT * FROM realiza WHERE id_cuenta = $1";
     const paymentsValues = [accountId];
     const paymentsResult = await client.query(paymentsQuery, paymentsValues);
     const payments = paymentsResult.rows;
@@ -319,4 +319,24 @@ export async function getTiers(req, res) {
   } finally {
     await client.end();
   }
+}
+
+export function getActiveSubscriptionUser(req, res) {
+  const client = getClient();
+  const token = req.headers.authorization.split(" ")[1];
+  const dataDecoded = jwt.decode(token);
+  const id_cuenta_usuario = dataDecoded.id_cuenta;
+  const query = `
+    SELECT get_active_subscription_user($1)
+  `;
+
+  const values = [id_cuenta_usuario];
+  client.query(query, values, (err, result) => {
+    if (err) {
+      console.error(err);
+      res.status(500).json({ message: err.message });
+    } else {
+      res.status(200).json(result.rows[0]);
+    }
+  });
 }
