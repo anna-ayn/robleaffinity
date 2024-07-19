@@ -64,13 +64,40 @@ const Pagos = () => {
         const data = await response.json();
         setPayments(data);
       } catch (error) {
-        console.error("Error fetching card data:", error);
+        console.error("Error fetching payments:", error);
+      }
+    };
+
+    const getActiveSubscription = async () => {
+      try {
+        const response = await fetch(
+          "http://localhost:3001/api/getActiveSubscriptionUser",
+          {
+            method: "GET",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
+        if (!response.ok) {
+          throw new Error("Network response was not ok " + response.statusText);
+        }
+        const data = await response.json();
+
+        if (
+          data.get_active_subscription_user !== "No tiene subscripción activa"
+        )
+          setSubscription(data.get_active_subscription_user);
+      } catch (error) {
+        console.error("Error fetching active subscription:", error);
       }
     };
 
     fetchTiers();
     getDataOfCards();
     getPayments();
+    getActiveSubscription();
   }, []);
 
   const handleCancelSubscription = async () => {
@@ -137,17 +164,9 @@ const Pagos = () => {
         <div className="text-right">
           <div className="mb-2">
             {subscription
-              ? `Suscripción actual: ${subscription.name}`
+              ? `Suscripción actual: ${subscription}`
               : "No tienes una suscripción activa"}
           </div>
-          {subscription && (
-            <button
-              onClick={handleCancelSubscription}
-              className="bg-red-500 text-black px-4 py-2 rounded"
-            >
-              Cancelar suscripción
-            </button>
-          )}
         </div>
         <div className="flex justify-center p-4">
           <button

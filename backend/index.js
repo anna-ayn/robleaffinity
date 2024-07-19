@@ -25,6 +25,7 @@ import {
   getDataOfCards,
   getTiers,
   getPaymentsByAccount,
+  getActiveSubscriptionUser,
 } from "./pagos.js";
 
 import { goToAdmin } from "./admin.js";
@@ -84,6 +85,8 @@ app.post("/api/subscribeUserToTier", subscribeUserToTier);
 app.get("/api/getDataOfCards", getDataOfCards);
 app.get("/api/getTiers", getTiers);
 app.post("/api/likeOrSwipe", likeOrSwipe);
+
+app.get("/api/getActiveSubscriptionUser", getActiveSubscriptionUser);
 
 app.get("/api/getPagos", getPaymentsByAccount);
 
