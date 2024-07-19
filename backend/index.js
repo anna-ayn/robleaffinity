@@ -18,6 +18,7 @@ import { deleteAgrupacion } from "./agrupaciones.js";
 import { addTitulo, deleteTitulo } from "./titulos.js";
 import { addTrabajaEn, deleteTrabajaEn } from "./trabaja_en.js";
 import { getInfoCuenta, updateInfoCuenta, updateSettings } from "./settings.js";
+import { getUsersByPreferences } from "./match.js"
 
 const app = express();
 const port = 3001;
@@ -64,6 +65,7 @@ app.post("/api/deleteEmpresa", deleteTrabajaEn);
 app.get("/api/getInfoCuenta", getInfoCuenta);
 app.post("/api/updateSettings", updateSettings);
 app.post("/api/updateInfoCuenta", updateInfoCuenta);
+app.get("/api/getPeopleByPreferences", getUsersByPreferences);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

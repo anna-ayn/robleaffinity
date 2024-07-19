@@ -137,6 +137,7 @@ export async function getData(req, res) {
   try {
     const token = req.headers.authorization.split(" ")[1];
     const userId = jwt.decode(token);
+    console.log(userId)
 
     const query = "SELECT * FROM get_all_public_info_about_user($1)";
     const data = await client.query(query, [userId.id_cuenta]);
