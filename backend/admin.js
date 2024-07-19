@@ -15,13 +15,15 @@ export async function goToAdmin(req, res) {
   const client = getClient();
   dotenv.config();
 
-  const { email, contrasena_propuesta } = req.body;
+  const { email, contrasena_propuesta } = await req.body;
+  console.log(email, contrasena_propuesta);
 
   try {
     const query = "SELECT * FROM admin WHERE email = $1";
     const result = await client.query(query, [email]);
 
     if (result.rows.length === 0) {
+      console.log("Email not found in database");
       return res
         .status(400)
         .json({ message: "Correo electrónico no registrado" });
@@ -39,6 +41,7 @@ export async function goToAdmin(req, res) {
     );
 
     if (!checkPasswordResult.rows[0].password_match) {
+      console.log("Password doesnt match");
       return res.status(400).json({ message: "Contraseña incorrecta" });
     }
 

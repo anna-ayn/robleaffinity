@@ -1,18 +1,15 @@
-import { useNavigate } from "react-router-dom";
 import { useRef } from "react";
 import "../../App.css";
 import logo from "../../img/Logo.png";
 
 export default function LoginAdmin() {
-  const navigate = useNavigate();
-
   const email = useRef();
   const contrasena = useRef();
 
   const LogIn = () => {
     const data = {
       email: email.current.value,
-      contrasena: contrasena.current.value,
+      contrasena_propuesta: contrasena.current.value,
     };
 
     fetch("http://localhost:3001/api/goToAdmin", {
@@ -22,15 +19,23 @@ export default function LoginAdmin() {
       },
       body: JSON.stringify(data),
     })
-      .then((res) => res.json())
-      .then((res) => {
-        if (res.error) {
-          alert(res.error);
+      .then((response) => {
+        if (response.ok) {
+          window.location.href = "/AdminDashboard";
+          return response.text();
         } else {
-          console.log(res.token);
-          localStorage.setItem("token", res.token);
-          navigate("/AdminDashboard");
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+          console.log(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
         }
+      })
+      .catch((error) => {
+        alert("Error 500 al login admin: ", error);
       });
   };
 
