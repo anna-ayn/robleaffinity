@@ -5,9 +5,10 @@ import MultiSelect from "../components/MultiSelect";
 import PropTypes from "prop-types";
 import validator from "validator";
 
-function AskPreferences({ firstTime }) {
+function AskPreferences({ firstTime, inSettings = false }) {
   AskPreferences.propTypes = {
     firstTime: PropTypes.bool,
+    inSettings: PropTypes.bool,
   };
 
   const [grado, setGrado] = useState("");
@@ -20,8 +21,7 @@ function AskPreferences({ firstTime }) {
   const [latitud_origen, setLatitudOrigen] = useState(0);
   const [longitud_origen, setLongitudOrigen] = useState(0);
   const [thereisdata, setThereisdata] = useState(false);
-  const [userHasPreference,setUserHasPreference] = useState(false)
-
+  const [userHasPreference, setUserHasPreference] = useState(false);
 
   const genreOptions = [
     { value: "F", label: "Femenino" },
@@ -64,9 +64,10 @@ function AskPreferences({ firstTime }) {
         setLongitudOrigen(data.longitud_origen);
         setThereisdata(true);
         setUserWithPassport(data.tiene_passport);
-      }).catch(e => {
-        console.log(e)
       })
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   useEffect(() => {
@@ -87,9 +88,9 @@ function AskPreferences({ firstTime }) {
       arr_prefSexos: sexo,
       arr_prefOrientaciones: orientacion,
       latitud_origen: firstTime ? latitud_origen : null,
-      longitud_origen: firstTime ? longitud_origen : null ,
+      longitud_origen: firstTime ? longitud_origen : null,
     };
-    if (firstTime && !thereisdata && userHasPreference) {
+    if ((firstTime && !thereisdata) || !userHasPreference || !inSettings) {
       fetch("http://localhost:3001/api/insertPreferences", {
         method: "POST",
         headers: {
@@ -161,17 +162,18 @@ function AskPreferences({ firstTime }) {
 
   useEffect(() => {
     const fetchUserPreferences = async () => {
-
       try {
-
-        const response = await fetch("http://localhost:3001/api/checkIfUserHasPreferences", {
-          method: "POST",
-          headers: {
-            Accept: "application/json",
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
+        const response = await fetch(
+          "http://localhost:3001/api/checkIfUserHasPreferences",
+          {
+            method: "POST",
+            headers: {
+              Accept: "application/json",
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+          }
+        );
 
         const data = await response.json();
 
@@ -180,15 +182,15 @@ function AskPreferences({ firstTime }) {
         }
         setThereisdata(true);
       } catch (error) {
-        console.log(error)
+        console.log(error);
         alert("Error 500 al obtener la informacion de la cuenta: ", error);
       }
     };
 
     fetchUserPreferences();
-  }, [])
+  }, []);
 
-  if (!thereisdata && !firstTime) {
+  if (!thereisdata && !firstTime && !inSettings) {
     return <div>Cargando preferencias...</div>;
   }
 
