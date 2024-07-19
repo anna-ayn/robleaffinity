@@ -5,6 +5,7 @@ import Dashboard from "./pages/Dashboard";
 import MyProfile from "./pages/MyProfile";
 import Settings from "./pages/Settings";
 import Payments from "./pages/Payments";
+import Chat from "./pages/Chat"
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Tarjetas from "./pages/Tarjetas";
 
@@ -19,6 +20,7 @@ function App() {
         <Route path="/log-in" element={<LogIn />} />
         <Route path="/tarjetas" element={<Tarjetas />} />
         <Route path="/payments" element={<Payments />} />
+        <Route path="/chat" element={<Chat />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/MyProfile" element={<MyProfile />} />
         <Route path="/settings" element={<Settings />} />

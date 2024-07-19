@@ -12,15 +12,15 @@ const Sidebar = () => {
           <div className="mx-3 px-4 py-2 w-30 ">
             <button
               className="w-full px-4 py-2 mb-5 text-sm border-x-2 border-[#de5466] hover:animate-pulse hover:text-black"
-              onClick={() => (window.location.href = "/Dashboard")}
-            >
-              Inicio
-            </button>
-            <button
-              className="w-full px-4 py-2 mb-5 text-sm border-x-2 border-[#de5466] hover:animate-pulse hover:text-black"
               onClick={() => (window.location.href = "/MyProfile")}
             >
-              Ver mi Perfil
+              Perfil
+            </button>            
+            <button
+              className="w-full px-4 py-2 mb-5 text-sm border-x-2 border-[#de5466] hover:animate-pulse hover:text-black"
+              onClick={() => (window.location.href = "/Dashboard")}
+            >
+              Dashboard
             </button>
             <button
               className="w-full px-4 py-2 mb-5 text-sm border-x-2 border-[#de5466] hover:animate-pulse hover:text-black"
@@ -34,6 +34,12 @@ const Sidebar = () => {
             >
               Tarjetas
             </button>
+            <button
+              className="w-full px-4 py-2 mb-5 text-sm border-x-2 border-[#de5466] hover:animate-pulse hover:text-black"
+              onClick={() => (window.location.href = "/chat")}
+            >
+              Chat
+            </button>            
             <button
               className="w-full px-4 py-2 text-sm border-x-2 border-[#de5466] hover:animate-pulse hover:text-black"
               onClick={() => (window.location.href = "/settings")}
