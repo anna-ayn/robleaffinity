@@ -25,7 +25,8 @@ function Dashboard() {
     });
   }, []);
 
-  const insertlike = () => {
+  const insertlike = (user, isSuper) => {
+    const action = isSuper ? "superlike" : "like";
     fetch("http://localhost:3001/api/likeOrSwipe", {
       method: "POST",
       headers: {
@@ -33,21 +34,31 @@ function Dashboard() {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
-        targetUserId: dataOfUsersToDisplay[0],
-        action: "like",
+        targetUserId: user,
+        action: action,
       }),
-    }).then((res) => {
-      if (res.error) {
-        alert(res.error);
-      } else {
-        res.json().then(async (res) => {
-          console.log(res);
-        });
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert("Like dado con éxito");
+          return response.text();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+          console.log(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        alert("Error 500 al dar like: ", error);
+      });
   };
 
-  const insertSwipe = () => {
+  const insertSwipe = (user) => {
     fetch("http://localhost:3001/api/likeOrSwipe", {
       method: "POST",
       headers: {
@@ -55,18 +66,28 @@ function Dashboard() {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
       body: JSON.stringify({
-        targetUserId: dataOfUsersToDisplay[0],
+        targetUserId: user,
         action: "dislike",
       }),
-    }).then((res) => {
-      if (res.error) {
-        alert(res.error);
-      } else {
-        res.json().then(async (res) => {
-          console.log(res);
-        });
-      }
-    });
+    })
+      .then((response) => {
+        if (response.ok) {
+          alert("Dislike exitoso");
+          return response.text();
+        } else {
+          response.text().then((text) => {
+            alert(Error(text));
+          });
+          console.log(
+            response.text().then((text) => {
+              throw new Error(text);
+            })
+          );
+        }
+      })
+      .catch((error) => {
+        alert("Error 500 al dar dislike: ", error);
+      });
   };
 
   return (
@@ -80,13 +101,19 @@ function Dashboard() {
               <div className="ml-[15rem] mt-5 flex flex-row justify-around ">
                 <button
                   className="bg-red-500 text-white rounded-md p-2"
-                  onClick={insertSwipe}
+                  onClick={() => insertSwipe(user)}
                 >
                   Dislike
                 </button>
                 <button
+                  className="bg-green-500 text-white rounded-md p-2"
+                  onClick={() => insertlike(user, true)}
+                >
+                  Superlike
+                </button>
+                <button
                   className="bg-blue-500 text-white rounded-md p-2"
-                  onClick={insertlike}
+                  onClick={() => insertlike(user, false)}
                 >
                   Like
                 </button>

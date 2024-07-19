@@ -85,7 +85,7 @@ app.post("/api/updateDueDateCard", updateDueDateCard);
 app.get("/api/getPaymentData", getDataPago);
 app.post("/api/subscribeUserToTier", subscribeUserToTier);
 app.get("/api/getDataOfCards", getDataOfCards);
-app.get("/api/likeOrSwipe", likeOrSwipe);
+app.post("/api/likeOrSwipe", likeOrSwipe);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
