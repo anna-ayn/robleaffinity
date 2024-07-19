@@ -2,7 +2,6 @@ import Home from "./pages/Home";
 import SignUp from "./pages/SignUp";
 import LogIn from "./pages/LogIn";
 import Dashboard from "./pages/Dashboard";
-import AskPreferences from "./pages/AskPreferences";
 import MyProfile from "./pages/MyProfile";
 import Settings from "./pages/Settings";
 import Payments from "./pages/Payments";
