@@ -25,7 +25,7 @@ import {
   getDataOfCards,
   getTiers
 } from "./pagos.js";
-
+import { getUserChatsAndInfo } from "./chat.js"
 import { goToAdmin } from "./admin.js";
 
 const app = express();
@@ -83,8 +83,8 @@ app.post("/api/subscribeUserToTier", subscribeUserToTier);
 app.get("/api/getDataOfCards", getDataOfCards);
 app.get("/api/getTiers", getTiers);
 app.post("/api/likeOrSwipe", likeOrSwipe);
-
 app.post("/api/goToAdmin", goToAdmin);
+app.get("/api/getUserChatsAndInfo", getUserChatsAndInfo)
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

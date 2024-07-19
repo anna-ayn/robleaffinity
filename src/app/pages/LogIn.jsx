@@ -33,7 +33,7 @@ function Home() {
         } else {
           console.log(res.token);
           localStorage.setItem("token", res.token);
-          navigate("/perfil");
+          navigate("/myProfile");
         }
       });
   };

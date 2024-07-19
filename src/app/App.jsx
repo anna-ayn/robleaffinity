@@ -22,7 +22,7 @@ function App() {
         <Route path="/payments" element={<Payments />} />
         <Route path="/chat" element={<Chat />} />
         <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/MyProfile" element={<MyProfile />} />
+        <Route path="/myProfile" element={<MyProfile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
 
