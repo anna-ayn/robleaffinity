@@ -26,7 +26,6 @@ export async function insertUserTarjeta(req, res) {
   }
 }
 
-
 export async function deleteInstanceRegistra(req, res) {
     const client = getClient();
   
@@ -63,7 +62,6 @@ export async function updateDueDateCard(req, res) {
       `;
       const values = [card_number, new_due_date];
   
-      await client.connect();
       await client.query(query, values);
       res.status(200).json({ message: 'Fecha de caducidad actualizada correctamente' });
     } catch (error) {
@@ -85,7 +83,6 @@ export async function getDataPago(req, res) {
       `;
       const values = [id_pago];
   
-      await client.connect();
       const result = await client.query(query, values);
       
       if (result.rows.length === 0) {
@@ -101,3 +98,54 @@ export async function getDataPago(req, res) {
       await client.end();
     }
   }
+
+export async function subscribeUserToTier(req, res) {
+  const client = getClient();
+
+  try {
+    // Obtener los datos del cuerpo de la solicitud
+    const {
+      nombre_tier_usuario,
+      plazo_tier,
+      digitos_tarjeta_usario,
+      numero_factura_actual,
+      estado_pago,
+      monto_pago,
+      documento_factura_usuario
+    } = req.body;
+
+    // Obtener el token de autorización del encabezado
+    const token = req.headers.authorization.split(" ")[1];
+    const dataDecoded = jwt.decode(token);
+    const id_cuenta_usuario = dataDecoded.id_cuenta;
+
+    // Consultar la base de datos usando la función subscribe_user
+    const query = `
+      SELECT subscribe_user($1, $2, $3, $4, $5, $6, $7, $8)
+    `;
+    const values = [
+      id_cuenta_usuario,
+      nombre_tier_usuario,
+      plazo_tier,
+      digitos_tarjeta_usario,
+      numero_factura_actual,
+      estado_pago,
+      monto_pago,
+      documento_factura_usuario
+    ];
+
+    await client.query(query, values);
+
+    // Responder al cliente que la suscripción fue exitosa
+    res.status(200).json({ message: 'Suscripción del usuario realizada correctamente' });
+  } catch (error) {
+    console.error('Error en subscribeUser:', error);
+
+    // Enviar una respuesta de error en caso de excepción
+    res.status(500).json({ message: error.message });
+  } finally {
+    // Asegurarse de cerrar la conexión con la base de datos
+    await client.end();
+  }
+}
+

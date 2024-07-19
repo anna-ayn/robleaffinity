@@ -21,6 +21,7 @@ import { addTitulo, deleteTitulo } from "./titulos.js";
 import { addTrabajaEn, deleteTrabajaEn } from "./trabaja_en.js";
 import { getInfoCuenta, updateInfoCuenta, updateSettings } from "./settings.js";
 import { getUsersByPreferences } from "./match.js"
+import { insertUserTarjeta, deleteInstanceRegistra, updateDueDateCard, getDataPago, subscribeUserToTier} from "./pagos.js"
 
 const app = express();
 const port = 3001;
@@ -70,8 +71,12 @@ app.post("/api/updateInfoCuenta", updateInfoCuenta);
 app.get("/api/getPeopleByPreferences", getUsersByPreferences);
 app.post("/api/checkIfUserHasPreferences", checkIfUserHasPreferences);
 app.post("/api/updatePreferences", updatePreferences);
-
 app.get("/api/getAnotherUserData", getAnotherUserData);
+app.post("/api/insertUserCard", insertUserTarjeta);
+app.post("/api/deleteRegisterInstance", deleteInstanceRegistra);
+app.post("/api/updateDueDateCard", updateDueDateCard);
+app.get("/api/getPaymentData", getDataPago);
+app.post("/api/subscribeUserToTier", subscribeUserToTier);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
