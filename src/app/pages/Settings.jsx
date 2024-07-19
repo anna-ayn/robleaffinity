@@ -37,27 +37,33 @@ export default function Settings() {
   };
 
   useEffect(() => {
-    getInfoCuenta();
-    fetch("http://localhost:3001/api/checkIfUserHasPreferences", {
-      method: "POST",
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
+    const fetchUserPreferences = async () => {
+      await getInfoCuenta();
+
+      try {
+        const response = await fetch("http://localhost:3001/api/checkIfUserHasPreferences", {
+          method: "POST",
+          headers: {
+            Accept: "application/json",
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        });
+
+        const data = await response.json();
+
         if (data.hasPreferences === true) {
           setUserHasPreference(true);
         }
         setThereisdata(true);
-      })
-      .catch((error) => {
+      } catch (error) {
+        console.log(error)
         alert("Error 500 al obtener la informacion de la cuenta: ", error);
-        return;
-      });
-  }, []);
+      }
+    };
+
+    fetchUserPreferences();
+  }, [])
 
   const saveSettings = () => {
     fetch("http://localhost:3001/api/updateSettings", {

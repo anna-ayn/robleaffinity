@@ -10,6 +10,25 @@ const app = express();
 app.set("trust proxy", true);
 app.use("/auth/*", ExpressAuth({ providers: [] }));
 
+const maxRetries = 5;
+
+async function queryWithRetry(query, values, retries = 0) {
+  const client = getClient();
+  
+  try {
+    const result = await client.query(query, values);
+    return result;
+  } catch (err) {
+    if (err.code === 'XX000' && retries < maxRetries) {
+      console.log(`Retrying query, attempt ${retries + 1}`);
+      await new Promise(res => setTimeout(res, (retries + 1) * 100)); // Exponential backoff
+      return queryWithRetry(query, values, retries + 1);
+    } else {
+      throw err;
+    }
+  }
+}
+
 export async function getPreferences(req, res) {
   const client = getClient();
 
@@ -123,28 +142,34 @@ export async function insertPreferences(req, res) {
 }
 
 export async function checkIfUserHasPreferences(req, res) {
-  const client = getClient();
+  const token = req.headers.authorization.split(" ")[1];
+
+  if (!token) {
+    return res.status(401).json({ message: 'Authorization token missing' });
+  }
 
   try {
-    const token = req.headers.authorization.split(" ")[1];
-    const userId = jwt.decode(token);
+    const decoded = jwt.verify(token, 'your_secret_key'); // Reemplaza 'your_secret_key' con tu clave secreta real
+    const userId = decoded.id_cuenta;
 
     const query = "SELECT * FROM preferencias WHERE id_cuenta = $1";
-    const result = await client.query(query, [userId.id_cuenta]);
+    const result = await queryWithRetry(query, [userId]);
 
     if (result.rows.length === 0) {
-      res.json({ hasPreferences: false });
+      return res.json({ hasPreferences: false });
     } else {
-      res.json({ hasPreferences: true });
+      return res.json({ hasPreferences: true });
     }
   } catch (error) {
-    console.log(error);
-    res.status(500).json({ message: error.message });
-  } finally {
-    await client.end();
+    console.log('Error checking user preferences:', error);
+
+    if (error.name === 'JsonWebTokenError') {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+
+    return res.status(500).json({ message: error.message });
   }
 }
-
 export async function updatePreferences(req, res) {
   const client = getClient();
 
