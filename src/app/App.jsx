@@ -8,6 +8,8 @@ import Payments from "./pages/Payments";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Tarjetas from "./pages/Tarjetas";
 
+import LoginAdmin from "./pages/Admin/LoginAdmin";
+
 function App() {
   return (
     <BrowserRouter>
@@ -21,6 +23,8 @@ function App() {
         <Route path="/MyProfile" element={<MyProfile />} />
         <Route path="/settings" element={<Settings />} />
         <Route path="*" element={<h1>404 Not Found</h1>} />
+
+        <Route path="/loginAdmin" element={<LoginAdmin />} />
       </Routes>
     </BrowserRouter>
   );

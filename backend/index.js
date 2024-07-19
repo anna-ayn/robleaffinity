@@ -25,6 +25,8 @@ import {
   getDataOfCards,
 } from "./pagos.js";
 
+import { goToAdmin } from "./admin.js";
+
 const app = express();
 const port = 3001;
 
@@ -79,6 +81,8 @@ app.get("/api/getPaymentData", getDataPago);
 app.post("/api/subscribeUserToTier", subscribeUserToTier);
 app.get("/api/getDataOfCards", getDataOfCards);
 app.post("/api/likeOrSwipe", likeOrSwipe);
+
+app.post("/api/goToAdmin", goToAdmin);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);
