@@ -14,7 +14,7 @@ export default function Chat() {
     })
       .then((res) => {
         if (!res.ok) {
-          throw new Error('Network response was not ok');
+          throw new Error("Network response was not ok");
         }
         return res.json();
       })
@@ -23,15 +23,15 @@ export default function Chat() {
         setChats(data);
       })
       .catch((error) => {
-        console.error('Error fetching data:', error);
-        alert('Error fetching data');
+        console.error("Error fetching data:", error);
+        alert("Error fetching data");
       });
   }, []);
 
   return (
     <div className="flex" style={{ width: "1200px" }}>
       <Sidebar />
-      <div className="flex-1 p-4">
+      <div className="ml-[15rem] flex-1 p-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           {chats.map((chat) => (
             <div
@@ -59,7 +59,9 @@ export default function Chat() {
               </div>
               <div className="p-4 border-t border-gray-200 text-center">
                 <button
-                  onClick={() => (window.location.href = `/chat/${chat.id_chat}/${chat.id_otro_usuario}`)}
+                  onClick={() =>
+                    (window.location.href = `/chat/${chat.id_chat}/${chat.id_otro_usuario}`)
+                  }
                   className="inline-block px-6 py-3 mt-4 text-white bg-blue-600 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 transition duration-300 ease-in-out"
                 >
                   Ir a chat
@@ -70,5 +72,5 @@ export default function Chat() {
         </div>
       </div>
     </div>
-  )
+  );
 }
