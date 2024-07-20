@@ -27,7 +27,7 @@ import {
   getPaymentsByAccount,
   getActiveSubscriptionUser,
 } from "./pagos.js";
-import { getUserChatsAndInfo } from "./chat.js"
+import { getUserChatsAndInfo, getPublicDataOfUser } from "./chat.js"
 import { goToAdmin } from "./admin.js";
 
 const app = express();
@@ -92,6 +92,8 @@ app.get("/api/getPagos", getPaymentsByAccount);
 
 app.post("/api/goToAdmin", goToAdmin);
 app.get("/api/getUserChatsAndInfo", getUserChatsAndInfo)
+app.post("/api/getPublicDataOfUser", getPublicDataOfUser)
+
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`);

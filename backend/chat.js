@@ -47,7 +47,29 @@ export async function getUserChatsAndInfo(req, res) {
     }
   }
 
-
+  export async function getPublicDataOfUser(req, res) {
+    const client = getClient();
+    
+    try {
+        const {otherUserId} = req.body  
+        const otherUserQuery = "SELECT * FROM get_all_public_info_about_user($1)";
+        const otherUserData = await client.query(otherUserQuery, [otherUserId]);
+        const photoQuery = "SELECT * FROM get_photos_user($1)";
+        const photoData = await client.query(photoQuery, [otherUserId]); 
+        const chatterData = {
+            nombre: otherUserData.rows[0].r_nombre,
+            apellido: otherUserData.rows[0].r_apellido,
+            fotos: photoData.rows
+        }
+  
+      res.json(chatterData);
+    } catch (error) {
+      console.log(error);
+      res.status(500).json({ message: error.message });
+    } finally {
+      await client.end();
+    }
+  }
 
 
 
